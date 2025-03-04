@@ -1,4 +1,4 @@
-name: Google Java Formatter
+name: main-action
 
 on: pull_request
 
