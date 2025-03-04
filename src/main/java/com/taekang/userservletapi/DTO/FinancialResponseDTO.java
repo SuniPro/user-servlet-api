@@ -1,6 +1,3 @@
 package com.taekang.userservletapi.DTO;
 
-public class FinancialResponseDTO {
-
-
-}
+public class FinancialResponseDTO {}

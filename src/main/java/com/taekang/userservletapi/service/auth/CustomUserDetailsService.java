@@ -15,23 +15,25 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class CustomUserDetailsService implements UserDetailsService {
 
-    private final UserRepository userRepository;
+  private final UserRepository userRepository;
 
-    private final ModelMapper mapper;
+  private final ModelMapper mapper;
 
-    @Autowired
-    public CustomUserDetailsService(UserRepository userRepository, ModelMapper mapper) {
-        this.userRepository = userRepository;
-        this.mapper = mapper;
-    }
+  @Autowired
+  public CustomUserDetailsService(UserRepository userRepository, ModelMapper mapper) {
+    this.userRepository = userRepository;
+    this.mapper = mapper;
+  }
 
-    @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException("해당하는 유저가 없습니다."));
+  @Override
+  public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    User user =
+        userRepository
+            .findByUsername(username)
+            .orElseThrow(() -> new UsernameNotFoundException("해당하는 유저가 없습니다."));
 
-        CustomUserDTO DTO = mapper.map(user, CustomUserDTO.class);
+    CustomUserDTO DTO = mapper.map(user, CustomUserDTO.class);
 
-        return new CustomUserDetails(DTO);
-    }
+    return new CustomUserDetails(DTO);
+  }
 }
-
