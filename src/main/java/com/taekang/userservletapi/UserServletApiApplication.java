@@ -6,8 +6,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class UserServletApiApplication {
 
-    public static void main(String[] args) {
-        SpringApplication.run(UserServletApiApplication.class, args);
-    }
-
+  public static void main(String[] args) {
+    SpringApplication.run(UserServletApiApplication.class, args);
+  }
 }
