@@ -1,0 +1,69 @@
+name: "CodeQL Analysis for JAVA"
+
+on: pull_request
+
+jobs:
+  analyze:
+    name: "CodeQL Analyze"
+    runs-on: ubuntu-latest
+    permissions:
+      security-events: write
+      pull-requests: write  # PR에 코멘트를 추가하려면 필요
+      actions: read
+      contents: read
+
+    strategy:
+      fail-fast: false
+      matrix:
+        language: [java]
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v2
+        with:
+          languages: ${{ matrix.language }}
+          queries: security-and-quality  # 보안 + 코드 품질 검사
+
+      - name: Build project
+        run: ./gradlew build  # Gradle 프로젝트 빌드
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v2
+
+      - name: Check for Code Scanning Alerts
+        if: always()  # 항상 실행
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const { owner, repo } = context.repo;
+            const prNumber = context.payload.pull_request?.number;
+
+            if (!prNumber) {
+              console.log("PR이 아닙니다. 코멘트를 추가하지 않습니다.");
+              return;
+            }
+
+            const alerts = await github.request('GET /repos/{owner}/{repo}/code-scanning/alerts', {
+              owner: owner,
+              repo: repo
+            });
+
+            if (alerts.data.length > 0) {
+              const message = `⚠️ CodeQL 분석에서 **${alerts.data.length}개의 보안 취약점**이 발견되었습니다.  
+              [Code scanning alerts](https://github.com/${owner}/${repo}/security/code-scanning)에서 자세한 내용을 확인하세요.`;
+
+              await github.issues.createComment({
+                owner,
+                repo,
+                issue_number: prNumber,
+                body: message
+              });
+
+              console.log("PR에 보안 취약점 경고 코멘트를 추가했습니다.");
+            } else {
+              console.log("보안 취약점이 발견되지 않았습니다. PR에 코멘트를 추가하지 않습니다.");
+            }
