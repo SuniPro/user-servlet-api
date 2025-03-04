@@ -1,0 +1,13 @@
+{
+  "branches": ["main"],
+  "release-type": "node",
+  "bump-minor-pre-major": true,
+  "changelog-types": [
+    {"type": "feat", "section": "🚀 New Features", "bump": "minor"},
+    {"type": "fix", "section": "🐛 Bug Fixes", "bump": "patch"},
+    {"type": "BREAKING CHANGE", "section": "⚠️ Breaking Changes", "bump": "major"},
+    {"type": "refactor", "section": "🔨 Refactors", "bump": "patch"},
+    {"type": "styled", "section": "💄 UI Changes", "bump": "patch"},
+    {"type": "test", "section": "🧪 Tests", "bump": "none"}
+  ]
+}
