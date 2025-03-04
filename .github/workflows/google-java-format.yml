@@ -18,7 +18,9 @@ jobs:
 
       - name: Install Google Java Formatter
         run: |
-          curl -LJO https://github.com/google/google-java-format/releases/download/v1.17.0/google-java-format-1.17.0-all-deps.jar
+          if [ ! -f google-java-format-1.17.0-all-deps.jar ]; then
+            curl -LJO https://github.com/google/google-java-format/releases/download/v1.17.0/google-java-format-1.17.0-all-deps.jar
+          fi
 
       - name: Run Google Java Formatter
         run: java -jar google-java-format-1.17.0-all-deps.jar --replace $(find . -name "*.java")
