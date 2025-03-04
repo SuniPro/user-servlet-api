@@ -7,13 +7,13 @@ import lombok.Getter;
 @AllArgsConstructor
 public class ErrorResponse extends Throwable {
 
-    private final String code;
+  private final String code;
 
-    private final String message;
+  private final String message;
 
-    public ErrorResponse(ErrorCode errorCode) {
+  public ErrorResponse(ErrorCode errorCode) {
 
-        this.code = errorCode.getCode();
-        this.message = errorCode.getDescription();
-    }
+    this.code = errorCode.getCode();
+    this.message = errorCode.getDescription();
+  }
 }

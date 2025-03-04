@@ -1,6 +1,6 @@
 package com.taekang.userservletapi.service.auth;
 
-import com.taekang.userservletapi.DTO.CustomUserDTO;
+import com.taekang.userservletapi.DTO.user.CustomUserDTO;
 import com.taekang.userservletapi.entity.User;
 import com.taekang.userservletapi.repository.UserRepository;
 import org.modelmapper.ModelMapper;

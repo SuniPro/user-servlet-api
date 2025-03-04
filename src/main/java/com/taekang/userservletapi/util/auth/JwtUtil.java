@@ -1,6 +1,6 @@
 package com.taekang.userservletapi.util.auth;
 
-import com.taekang.userservletapi.DTO.CustomUserDTO;
+import com.taekang.userservletapi.DTO.user.CustomUserDTO;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
