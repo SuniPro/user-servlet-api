@@ -16,19 +16,13 @@ public class UserDTO {
 
     private String phoneNumber;
 
-    private String email;
-
-    private String profileImage;
-
-    private String profileMessage;
-
-    private String personalColor;
+                    private String email;
 
     private String password;
 
     private RoleType roleType;
 
-    private LocalDateTime insertDate;
+        private LocalDateTime insertDate;
 
     private String insertId;
 
