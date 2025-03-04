@@ -1,42 +1,35 @@
 package com.taekang.userservletapi.DTO.user;
 
 import com.taekang.userservletapi.entity.RoleType;
+import java.time.LocalDateTime;
 import lombok.Getter;
 import lombok.Setter;
-
-import java.time.LocalDateTime;
 
 @Getter
 @Setter
 public class UserDTO {
 
-    private Integer id;
+  private Integer id;
 
-    private String username;
+  private String username;
 
-    private String phoneNumber;
+  private String phoneNumber;
 
-    private String email;
+  private String email;
 
-    private String profileImage;
+  private String password;
 
-    private String profileMessage;
+  private RoleType roleType;
 
-    private String personalColor;
+  private LocalDateTime insertDate;
 
-    private String password;
+  private String insertId;
 
-    private RoleType roleType;
+  private LocalDateTime updateDate;
 
-    private LocalDateTime insertDate;
+  private String updateId;
 
-    private String insertId;
+  private LocalDateTime deleteDate;
 
-    private LocalDateTime updateDate;
-
-    private String updateId;
-
-    private LocalDateTime deleteDate;
-
-    private String deleteId;
+  private String deleteId;
 }
