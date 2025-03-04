@@ -1,6 +1,9 @@
-name: main-action
+name: Google Java Formatter
 
 on: pull_request
+
+permissions:
+  contents: write
 
 jobs:
   format:
