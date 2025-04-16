@@ -1,8 +1,7 @@
 package com.taekang.userservletapi.DTO.tether;
 
-import lombok.*;
-
 import java.time.LocalDateTime;
+import lombok.*;
 
 @Getter
 @Setter
@@ -11,15 +10,15 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class TetherAccountDTO {
 
-    private Long id;
+  private Long id;
 
-    private String tetherWallet;
+  private String tetherWallet;
 
-    private String username;
+  private String username;
 
-    private LocalDateTime insertDateTime;
+  private LocalDateTime insertDateTime;
 
-    private LocalDateTime updateDateTime;
+  private LocalDateTime updateDateTime;
 
-    private LocalDateTime deleteDateTime;
+  private LocalDateTime deleteDateTime;
 }

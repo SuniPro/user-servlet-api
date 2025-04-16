@@ -1,8 +1,7 @@
 package com.taekang.userservletapi.DTO.tether;
 
-import lombok.*;
-
 import java.math.BigDecimal;
+import lombok.*;
 
 @Getter
 @Setter
@@ -11,7 +10,7 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 public class TetherDepositRequestDTO {
 
-    private String tetherWallet;
+  private String tetherWallet;
 
-    private BigDecimal amount;
+  private BigDecimal amount;
 }
