@@ -1,13 +1,14 @@
 package com.taekang.userservletapi.util.auth;
 
-import com.taekang.userservletapi.response.error.ErrorCode;
+import com.taekang.userservletapi.error.ErrorCode;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
+
+import java.io.IOException;
 
 @Slf4j
 @Component
@@ -15,55 +16,32 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
 
   @Override
   public void commence(
-      HttpServletRequest request,
-      HttpServletResponse response,
-      AuthenticationException authException)
-      throws IOException {
-    String exception = (String) request.getAttribute("exception");
+          HttpServletRequest request,
+          HttpServletResponse response,
+          AuthenticationException authException)
+          throws IOException {
+
+    Object exceptionAttr = request.getAttribute("exception");
     ErrorCode errorCode;
 
-    log.debug("log: exception: {} ", exception);
+    if (exceptionAttr == null) {
+      errorCode = ErrorCode.CANNOT_FIND_TOKEN;
+    } else {
+      String exception = exceptionAttr.toString();
+      log.debug("exception: {}", exception);
 
-    /*
-     * 토큰 없는 경우
-     */
-    if (exception == null) {
-      errorCode = ErrorCode.NON_LOGIN;
-      setResponse(response, errorCode);
-      return;
+      switch (exception) {
+        case "TokenExpiredException" -> errorCode = ErrorCode.TOKEN_EXPIRE;
+        case "JWTVerificationException" -> errorCode = ErrorCode.TOKEN_ABNORMALITY;
+        default -> errorCode = ErrorCode.CANNOT_FIND_TOKEN;
+      }
     }
-
-    /*
-     * 토큰 만료된 경우
-     */
-    if (exception.equals(ErrorCode.EXPIRED_TOKEN.getCode())) {
-      errorCode = ErrorCode.EXPIRED_TOKEN;
-      setResponse(response, errorCode);
-      return;
-    }
-
-    /*
-     * 토큰 시그니처가 다른 경우
-     */
-    if (exception.equals(ErrorCode.INVALID_TOKEN.getCode())) {
-      errorCode = ErrorCode.INVALID_TOKEN;
-      setResponse(response, errorCode);
-    }
+    setResponse(response, errorCode);
   }
 
-  /** 한글 출력을 위해 getWriter() 사용 */
   private void setResponse(HttpServletResponse response, ErrorCode errorCode) throws IOException {
     response.setContentType("application/json;charset=UTF-8");
-    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-    response
-        .getWriter()
-        .println(
-            "{ \"message\" : \""
-                + errorCode.getDescription()
-                + "\", \"code\" : \""
-                + errorCode.getCode()
-                + "\", \"status\" : "
-                + errorCode.getStatus()
-                + ", \"errors\" : [ ] }");
+    response.setStatus(errorCode.getHttpStatus().value());
+    response.getWriter().println(errorCode);
   }
 }

@@ -8,7 +8,7 @@
     <!-- log file path -->
     <springProperty scope="context" name="LOG_PATH" source="logging.file.path"/>
     <!-- log file name -->
-    <property name="LOG_FILE_NAME" value="employee-servlet-api"/>
+    <property name="LOG_FILE_NAME" value="user-servlet-api"/>
     <!-- err log file name -->
     <property name="ERR_LOG_FILE_NAME" value="err_log"/>
     <!-- pattern -->
