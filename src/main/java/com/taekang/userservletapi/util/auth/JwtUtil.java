@@ -2,8 +2,8 @@ package com.taekang.userservletapi.util.auth;
 
 import com.taekang.userservletapi.DTO.user.CustomUserDTO;
 import io.jsonwebtoken.*;
-import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.time.ZonedDateTime;
 import java.util.Date;
@@ -13,7 +13,7 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
 
 @Slf4j
-@PropertySource("classpath:application-auth.properties")
+@PropertySource("classpath:application.properties")
 @Component
 public class JwtUtil {
 
@@ -23,8 +23,7 @@ public class JwtUtil {
   public JwtUtil(
       @Value("${jwt.secret}") String secretKey,
       @Value("${jwt.expiration_time}") long accessTokenExpTime) {
-    byte[] keyBytes = Decoders.BASE64.decode(secretKey);
-    this.key = Keys.hmacShaKeyFor(keyBytes);
+    this.key = Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8));
     this.accessTokenExpTime = accessTokenExpTime;
   }
 

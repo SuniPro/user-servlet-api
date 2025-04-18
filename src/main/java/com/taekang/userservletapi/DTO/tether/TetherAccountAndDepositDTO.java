@@ -8,13 +8,19 @@ import lombok.*;
 @Builder(toBuilder = true)
 @NoArgsConstructor
 @AllArgsConstructor
-public class TetherAccountDTO {
+public class TetherAccountAndDepositDTO {
 
   private Long id;
 
   private String tetherWallet;
 
   private String username;
+
+  private Boolean accepted;
+
+  private LocalDateTime acceptedAt;
+
+  private LocalDateTime requestedAt;
 
   private LocalDateTime insertDateTime;
 
