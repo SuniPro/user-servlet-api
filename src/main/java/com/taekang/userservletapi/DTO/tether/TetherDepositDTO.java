@@ -1,10 +1,9 @@
 package com.taekang.userservletapi.DTO.tether;
 
 import com.taekang.userservletapi.entity.TransactionStatus;
-import lombok.*;
-
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import lombok.*;
 
 @Getter
 @Setter
@@ -14,21 +13,21 @@ import java.time.LocalDateTime;
 @ToString
 public class TetherDepositDTO {
 
-    private Long id;
+  private Long id;
 
-    private String tetherWallet;
+  private String tetherWallet;
 
-    private String username;
+  private String username;
 
-    private LocalDateTime insertDateTime;
+  private LocalDateTime insertDateTime;
 
-    private BigDecimal amount;
+  private BigDecimal amount;
 
-    private Boolean accepted;
+  private Boolean accepted;
 
-    private LocalDateTime acceptedAt;
+  private LocalDateTime acceptedAt;
 
-    private LocalDateTime requestedAt;
+  private LocalDateTime requestedAt;
 
-    private TransactionStatus status;
+  private TransactionStatus status;
 }

@@ -9,15 +9,14 @@ import com.taekang.userservletapi.repository.TetherAccountRepository;
 import com.taekang.userservletapi.repository.TetherDepositRepository;
 import com.taekang.userservletapi.repository.TetherWithdrawRepository;
 import com.taekang.userservletapi.service.financial.TetherService;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Optional;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @Service
@@ -42,21 +41,26 @@ public class TetherServiceImplements implements TetherService {
   @Override
   @Transactional
   public TetherAccountAndDepositDTO createOrFindTetherAccount(TetherCreateDTO tetherCreateDTO) {
-    TetherAccount account = tetherAccountRepository
+    TetherAccount account =
+        tetherAccountRepository
             .findByTetherWallet(tetherCreateDTO.getTetherWallet())
-            .orElseGet(() -> {
-              TetherAccount newAccount = TetherAccount.builder()
-                      .username(tetherCreateDTO.getUsername())
-                      .tetherWallet(tetherCreateDTO.getTetherWallet())
-                      .insertDateTime(LocalDateTime.now(ZoneId.of("Asia/Seoul")))
-                      .build();
-              return tetherAccountRepository.save(newAccount);
-            });
+            .orElseGet(
+                () -> {
+                  TetherAccount newAccount =
+                      TetherAccount.builder()
+                          .username(tetherCreateDTO.getUsername())
+                          .tetherWallet(tetherCreateDTO.getTetherWallet())
+                          .insertDateTime(LocalDateTime.now(ZoneId.of("Asia/Seoul")))
+                          .build();
+                  return tetherAccountRepository.save(newAccount);
+                });
 
-    Optional<TetherDeposit> latestDepositOpt = tetherDepositRepository
-            .findTopByTetherAccount_TetherWalletOrderByRequestedAtDesc(account.getTetherWallet());
+    Optional<TetherDeposit> latestDepositOpt =
+        tetherDepositRepository.findTopByTetherAccount_TetherWalletOrderByRequestedAtDesc(
+            account.getTetherWallet());
 
-    TetherAccountAndDepositDTO result = TetherAccountAndDepositDTO.builder()
+    TetherAccountAndDepositDTO result =
+        TetherAccountAndDepositDTO.builder()
             .id(account.getId())
             .tetherWallet(account.getTetherWallet())
             .username(account.getUsername())
@@ -68,11 +72,12 @@ public class TetherServiceImplements implements TetherService {
             .deleteDateTime(account.getDeleteDateTime())
             .build();
 
-    latestDepositOpt.ifPresent(deposit -> {
-      result.setAccepted(deposit.getAccepted());
-      result.setAcceptedAt(deposit.getAcceptedAt());
-      result.setRequestedAt(deposit.getRequestedAt());
-    });
+    latestDepositOpt.ifPresent(
+        deposit -> {
+          result.setAccepted(deposit.getAccepted());
+          result.setAcceptedAt(deposit.getAcceptedAt());
+          result.setRequestedAt(deposit.getRequestedAt());
+        });
 
     return result;
   }
@@ -117,27 +122,26 @@ public class TetherServiceImplements implements TetherService {
     return tetherDepositRepository.save(tetherDeposit);
   }
 
-  /**
-   * 특정 지갑의 마지막 입금 내역을 조회합니다.
-   */
+  /** 특정 지갑의 마지막 입금 내역을 조회합니다. */
   @Override
   @Transactional(readOnly = true)
   public TetherDepositDTO getLatestDepositByTetherWallet(String tetherWallet) {
-    TetherDeposit deposit = tetherDepositRepository
+    TetherDeposit deposit =
+        tetherDepositRepository
             .findTopByTetherAccount_TetherWalletOrderByRequestedAtDesc(tetherWallet)
             .orElseThrow(DepositNotFoundException::new);
 
     return TetherDepositDTO.builder()
-            .id(deposit.getId())
-            .tetherWallet(deposit.getTetherAccount().getTetherWallet())
-            .username(deposit.getTetherAccount().getUsername())
-            .insertDateTime(deposit.getTetherAccount().getInsertDateTime())
-            .amount(deposit.getAmount())
-            .accepted(deposit.getAccepted())
-            .acceptedAt(deposit.getAcceptedAt())
-            .requestedAt(deposit.getRequestedAt())
-            .status(deposit.getStatus())
-            .build();
+        .id(deposit.getId())
+        .tetherWallet(deposit.getTetherAccount().getTetherWallet())
+        .username(deposit.getTetherAccount().getUsername())
+        .insertDateTime(deposit.getTetherAccount().getInsertDateTime())
+        .amount(deposit.getAmount())
+        .accepted(deposit.getAccepted())
+        .acceptedAt(deposit.getAcceptedAt())
+        .requestedAt(deposit.getRequestedAt())
+        .status(deposit.getStatus())
+        .build();
   }
 
   @Override

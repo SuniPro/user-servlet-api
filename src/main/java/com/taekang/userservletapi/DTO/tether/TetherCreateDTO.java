@@ -9,7 +9,7 @@ import lombok.*;
 @AllArgsConstructor
 public class TetherCreateDTO {
 
-    private String username;
+  private String username;
 
-    private String tetherWallet;
+  private String tetherWallet;
 }

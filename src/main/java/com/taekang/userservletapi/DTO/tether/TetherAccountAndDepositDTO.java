@@ -1,8 +1,7 @@
 package com.taekang.userservletapi.DTO.tether;
 
-import lombok.*;
-
 import java.time.LocalDateTime;
+import lombok.*;
 
 @Getter
 @Setter

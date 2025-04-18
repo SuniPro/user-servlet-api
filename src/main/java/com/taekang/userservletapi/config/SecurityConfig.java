@@ -31,14 +31,10 @@ public class SecurityConfig {
   private final CustomAuthenticationEntryPoint authenticationEntryPoint;
 
   // 인증 없이 접근 가능한 URL 목록
-  private static final String[] AUTH_WHITELIST = {
-    "/tether/**"
-  };
+  private static final String[] AUTH_WHITELIST = {"/tether/**"};
 
   // CORS 허용경로
-  private static final String[] CORS_WHITELIST = {
-    "/user/**", "/board", "/file/get", "/tether/**"
-  };
+  private static final String[] CORS_WHITELIST = {"/user/**", "/board", "/file/get", "/tether/**"};
 
   @Bean
   public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -59,25 +55,25 @@ public class SecurityConfig {
         UsernamePasswordAuthenticationFilter.class);
 
     // 예외 처리 핸들러 설정
-    http.exceptionHandling(exceptionHandling ->
+    http.exceptionHandling(
+        exceptionHandling ->
             exceptionHandling
-                    .authenticationEntryPoint(authenticationEntryPoint)
-                    .accessDeniedHandler(accessDeniedHandler)
-    );
+                .authenticationEntryPoint(authenticationEntryPoint)
+                .accessDeniedHandler(accessDeniedHandler));
 
-    http.authorizeHttpRequests(auth -> auth
-            .anyRequest().permitAll() // ✅ 다 열어버리기
-    );
-//    // 요청 인증 및 권한 설정
-//    http.authorizeHttpRequests(
-//        auth ->
-//            auth.requestMatchers(AUTH_WHITELIST)
-//                .permitAll() // 인증 없이 접근 허용
-//                .requestMatchers(CORS_WHITELIST)
-//                .permitAll() // CORS 경로도 인증 없이 허용
-//                .anyRequest()
-//                .authenticated() // 그 외 요청은 인증 필요
-//        );
+    http.authorizeHttpRequests(
+        auth -> auth.anyRequest().permitAll() // ✅ 다 열어버리기
+        );
+    //    // 요청 인증 및 권한 설정
+    //    http.authorizeHttpRequests(
+    //        auth ->
+    //            auth.requestMatchers(AUTH_WHITELIST)
+    //                .permitAll() // 인증 없이 접근 허용
+    //                .requestMatchers(CORS_WHITELIST)
+    //                .permitAll() // CORS 경로도 인증 없이 허용
+    //                .anyRequest()
+    //                .authenticated() // 그 외 요청은 인증 필요
+    //        );
 
     return http.build();
   }
