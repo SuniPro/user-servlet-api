@@ -3,7 +3,7 @@ name: Build-user-servlet-api-prd.yml
 on:
   push:
     branches:
-      - main  # 원하는 브랜치로 변경 가능
+      - main
 
 jobs:
   build-and-deploy:
