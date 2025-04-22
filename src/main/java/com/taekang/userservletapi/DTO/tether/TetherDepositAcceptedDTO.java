@@ -14,7 +14,7 @@ public class TetherDepositAcceptedDTO {
 
   private Long depositId;
 
-  private String username; // 계정명 노출 목적
+  private String email;
 
   private BigDecimal amount;
 

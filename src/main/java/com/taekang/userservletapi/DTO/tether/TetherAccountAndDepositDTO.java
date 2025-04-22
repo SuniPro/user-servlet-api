@@ -1,7 +1,8 @@
 package com.taekang.userservletapi.DTO.tether;
 
-import java.time.LocalDateTime;
 import lombok.*;
+
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -14,7 +15,7 @@ public class TetherAccountAndDepositDTO {
 
   private String tetherWallet;
 
-  private String username;
+  private String email;
 
   private Boolean accepted;
 

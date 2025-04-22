@@ -17,7 +17,9 @@ public class TetherDepositDTO {
 
   private String tetherWallet;
 
-  private String username;
+  private String email;
+
+  private String virtual_wallet;
 
   private LocalDateTime insertDateTime;
 

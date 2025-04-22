@@ -1,8 +1,9 @@
 package com.taekang.userservletapi.entity;
 
 import jakarta.persistence.*;
-import java.time.LocalDateTime;
 import lombok.*;
+
+import java.time.LocalDateTime;
 
 @Getter
 @Entity
@@ -19,8 +20,11 @@ public class TetherAccount {
   @Column(name = "tether_wallet", unique = true, nullable = false)
   private String tetherWallet;
 
-  @Column(name = "username", nullable = false)
-  private String username;
+  @Column(name = "email", nullable = false)
+  private String email;
+
+  @Column(name = "virtual_wallet", nullable = true)
+  private String virtualWallet;
 
   @Column(name = "insert_date_time")
   private LocalDateTime insertDateTime;
