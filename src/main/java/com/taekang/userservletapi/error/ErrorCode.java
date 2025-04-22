@@ -31,7 +31,8 @@ public enum ErrorCode {
   DEPOSIT_NOT_FOUND_OR_ALREADY_APPROVED(
       "C400", "입금기록을 찾을 수 없거나, 이미 승인되었습니다.", HttpStatus.BAD_REQUEST),
   DUPLICATE_USERNAME_WITH_DIFFERENT_WALLET("S400", "잘못된 유저이름입니다.", HttpStatus.BAD_REQUEST),
-  DEPOSIT_NOT_FOUND("D404", "입금 정보를 찾을 수 없습니다.", HttpStatus.NOT_FOUND);
+  DEPOSIT_NOT_FOUND("D404", "입금 정보를 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
+  FAILED_MASSAGE_SEND("S500", "메일전송을 실패하였습니다.", HttpStatus.INTERNAL_SERVER_ERROR);
 
   private final String code;
   private final String message;

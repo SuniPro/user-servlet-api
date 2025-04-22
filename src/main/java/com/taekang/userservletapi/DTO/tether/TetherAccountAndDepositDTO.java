@@ -14,7 +14,7 @@ public class TetherAccountAndDepositDTO {
 
   private String tetherWallet;
 
-  private String username;
+  private String email;
 
   private Boolean accepted;
 

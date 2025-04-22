@@ -4,5 +4,5 @@ public class TetherWalletChangeRequestDTO {
 
   private String tetherWallet;
 
-  private String username;
+  private String email;
 }

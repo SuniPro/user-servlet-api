@@ -2,12 +2,10 @@ package com.taekang.userservletapi.service.financial.impl;
 
 import com.taekang.userservletapi.DTO.tether.*;
 import com.taekang.userservletapi.entity.*;
-import com.taekang.userservletapi.error.AccountNotFoundException;
-import com.taekang.userservletapi.error.DepositNotFoundException;
-import com.taekang.userservletapi.error.InvalidAmountException;
-import com.taekang.userservletapi.error.WalletVerification;
+import com.taekang.userservletapi.error.*;
 import com.taekang.userservletapi.repository.TetherAccountRepository;
 import com.taekang.userservletapi.repository.TetherDepositRepository;
+import com.taekang.userservletapi.service.EmailAuthorizationService;
 import com.taekang.userservletapi.service.financial.TetherService;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -26,27 +24,35 @@ public class TetherServiceImplements implements TetherService {
 
   private final TetherDepositRepository tetherDepositRepository;
 
+  private final EmailAuthorizationService emailAuthorizationService;
+
   @Autowired
   public TetherServiceImplements(
       TetherAccountRepository tetherAccountRepository,
-      TetherDepositRepository tetherDepositRepository) {
+      TetherDepositRepository tetherDepositRepository,
+      EmailAuthorizationService emailAuthorizationService) {
     this.tetherAccountRepository = tetherAccountRepository;
     this.tetherDepositRepository = tetherDepositRepository;
+    this.emailAuthorizationService = emailAuthorizationService;
   }
 
   @Override
   @Transactional
   public TetherAccountAndDepositDTO createOrFindTetherAccount(TetherCreateDTO dto) {
     boolean existAccount =
-        tetherAccountRepository.existsByTetherWalletAndUsername(
-            dto.getTetherWallet(), dto.getUsername());
-    boolean existsUsername = tetherAccountRepository.existsByUsername(dto.getUsername());
+        tetherAccountRepository.existsByTetherWalletAndEmail(dto.getTetherWallet(), dto.getEmail());
+    boolean existsUsername = tetherAccountRepository.existsByEmail(dto.getEmail());
     boolean existsWallet = tetherAccountRepository.existsByTetherWallet(dto.getTetherWallet());
 
     TetherAccount account;
     Optional<TetherDeposit> latestDepositOpt;
 
     if (existAccount) {
+      try {
+        emailAuthorizationService.sendAuthMail(dto.getEmail());
+      } catch (Exception e) {
+        throw new FailedMessageSendException();
+      }
       account =
           tetherAccountRepository
               .findByTetherWallet(dto.getTetherWallet())
@@ -62,7 +68,7 @@ public class TetherServiceImplements implements TetherService {
       account =
           tetherAccountRepository.save(
               TetherAccount.builder()
-                  .username(dto.getUsername())
+                  .email(dto.getEmail())
                   .tetherWallet(dto.getTetherWallet())
                   .insertDateTime(LocalDateTime.now(ZoneId.of("Asia/Seoul")))
                   .build());
@@ -79,7 +85,7 @@ public class TetherServiceImplements implements TetherService {
     return TetherAccountAndDepositDTO.builder()
         .id(account.getId())
         .tetherWallet(account.getTetherWallet())
-        .username(account.getUsername())
+        .email(account.getEmail())
         .accepted(latestDepositOpt.map(TetherBaseTransaction::getAccepted).orElse(null))
         .acceptedAt(latestDepositOpt.map(TetherBaseTransaction::getAcceptedAt).orElse(null))
         .requestedAt(latestDepositOpt.map(TetherBaseTransaction::getRequestedAt).orElse(null))
@@ -141,7 +147,7 @@ public class TetherServiceImplements implements TetherService {
     return TetherDepositDTO.builder()
         .id(deposit.getId())
         .tetherWallet(deposit.getTetherAccount().getTetherWallet())
-        .username(deposit.getTetherAccount().getUsername())
+        .email(deposit.getTetherAccount().getEmail())
         .insertDateTime(deposit.getTetherAccount().getInsertDateTime())
         .amount(deposit.getAmount())
         .accepted(deposit.getAccepted())
