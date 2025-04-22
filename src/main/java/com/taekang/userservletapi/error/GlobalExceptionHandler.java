@@ -12,7 +12,7 @@ public class GlobalExceptionHandler {
   public ResponseEntity<ErrorResponse> handleMessageSend(FailedMessageSendException e) {
 
     return ResponseEntity.status(e.getErrorCode().getHttpStatus())
-            .body(new ErrorResponse(ErrorCode.FAILED_MASSAGE_SEND));
+        .body(new ErrorResponse(ErrorCode.FAILED_MASSAGE_SEND));
   }
 
   @ExceptionHandler(WalletVerification.class)
