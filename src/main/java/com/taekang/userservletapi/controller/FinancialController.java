@@ -3,7 +3,9 @@ package com.taekang.userservletapi.controller;
 import com.taekang.userservletapi.DTO.tether.*;
 import com.taekang.userservletapi.entity.TetherAccount;
 import com.taekang.userservletapi.entity.TetherDeposit;
+import com.taekang.userservletapi.service.financial.ExchangeService;
 import com.taekang.userservletapi.service.financial.TetherService;
+import java.math.BigDecimal;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,9 +16,17 @@ public class FinancialController {
 
   private final TetherService tetherService;
 
+  private final ExchangeService exchangeService;
+
   @Autowired
-  public FinancialController(TetherService tetherService) {
+  public FinancialController(TetherService tetherService, ExchangeService exchangeService) {
     this.tetherService = tetherService;
+    this.exchangeService = exchangeService;
+  }
+
+  @GetMapping("exchange")
+  public ResponseEntity<BigDecimal> getExchangeInfo() {
+    return ResponseEntity.ok().body(exchangeService.getExchangeInfo());
   }
 
   @PutMapping("tether/create")

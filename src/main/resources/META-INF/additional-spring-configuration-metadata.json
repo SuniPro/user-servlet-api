@@ -1,0 +1,13 @@
+{
+  "properties": [
+    {
+      "name": "exchange.rate.url",
+      "type": "java.lang.String",
+      "description": "Description for exchange.rate.url."
+    },
+    {
+      "name": "exchange.rate.class",
+      "type": "java.lang.String",
+      "description": "Description for exchange.rate.class."
+    }
+  ] }
