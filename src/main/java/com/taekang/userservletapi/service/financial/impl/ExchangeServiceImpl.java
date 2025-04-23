@@ -3,14 +3,13 @@ package com.taekang.userservletapi.service.financial.impl;
 import com.taekang.userservletapi.error.CannotFoundedExchangeInfoException;
 import com.taekang.userservletapi.service.RestRequestService;
 import com.taekang.userservletapi.service.financial.ExchangeService;
+import java.math.BigDecimal;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-
-import java.math.BigDecimal;
 
 @Service
 public class ExchangeServiceImpl implements ExchangeService {
