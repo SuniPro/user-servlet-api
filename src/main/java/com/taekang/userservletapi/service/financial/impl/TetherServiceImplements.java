@@ -48,11 +48,6 @@ public class TetherServiceImplements implements TetherService {
     Optional<TetherDeposit> latestDepositOpt;
 
     if (existAccount) {
-      try {
-        emailAuthorizationService.sendAuthMail(dto.getEmail());
-      } catch (Exception e) {
-        throw new FailedMessageSendException();
-      }
       account =
           tetherAccountRepository
               .findByTetherWallet(dto.getTetherWallet())
@@ -64,6 +59,13 @@ public class TetherServiceImplements implements TetherService {
     } else if (existsUsername || existsWallet) {
       throw new WalletVerification(); // 중복 but 일치하지 않음
     } else {
+
+      try {
+        emailAuthorizationService.sendAuthMail(dto.getEmail());
+      } catch (Exception e) {
+        throw new FailedMessageSendException();
+      }
+
       // 신규 등록
       account =
           tetherAccountRepository.save(
