@@ -12,20 +12,20 @@ public class GlobalExceptionHandler {
   public ResponseEntity<ErrorResponse> handleMessageSend(FailedMessageSendException e) {
 
     return ResponseEntity.status(e.getErrorCode().getHttpStatus())
-        .body(new ErrorResponse(ErrorCode.FAILED_MASSAGE_SEND));
+        .body(new ErrorResponse(e.getErrorCode()));
   }
 
   @ExceptionHandler(WalletVerification.class)
   public ResponseEntity<ErrorResponse> handleWalletVerification(WalletVerification e) {
 
     return ResponseEntity.status(e.getErrorCode().getHttpStatus())
-        .body(new ErrorResponse(ErrorCode.WALLET_VERIFICATION));
+        .body(new ErrorResponse(e.getErrorCode()));
   }
 
   @ExceptionHandler(DuplicateAccountException.class)
   public ResponseEntity<ErrorResponse> handleDuplicateAccount(DuplicateAccountException e) {
     return ResponseEntity.status(e.getErrorCode().getHttpStatus())
-        .body(new ErrorResponse(ErrorCode.DUPLICATE_ACCOUNT));
+        .body(new ErrorResponse(e.getErrorCode()));
   }
 
   @ExceptionHandler(AccountNotFoundException.class)

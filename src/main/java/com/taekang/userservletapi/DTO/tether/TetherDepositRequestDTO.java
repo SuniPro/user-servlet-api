@@ -13,4 +13,6 @@ public class TetherDepositRequestDTO {
   private String tetherWallet;
 
   private BigDecimal amount;
+
+  private BigDecimal usdtAmount;
 }
