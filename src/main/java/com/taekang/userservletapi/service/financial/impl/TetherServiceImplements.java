@@ -38,17 +38,18 @@ public class TetherServiceImplements implements TetherService {
 
   @Override
   public TetherAccountDTO getTetherWallet(String email) {
-    TetherAccount tetherAccount = tetherAccountRepository.findByEmail(email).orElseThrow(AccountNotFoundException::new);
+    TetherAccount tetherAccount =
+        tetherAccountRepository.findByEmail(email).orElseThrow(AccountNotFoundException::new);
 
     return TetherAccountDTO.builder()
-            .id(tetherAccount.getId())
-            .tetherWallet(tetherAccount.getTetherWallet())
-            .email(tetherAccount.getEmail())
-            .virtualWallet(tetherAccount.getVirtualWallet())
-            .insertDateTime(tetherAccount.getInsertDateTime())
-            .updateDateTime(tetherAccount.getUpdateDateTime())
-            .deleteDateTime(tetherAccount.getDeleteDateTime())
-            .build();
+        .id(tetherAccount.getId())
+        .tetherWallet(tetherAccount.getTetherWallet())
+        .email(tetherAccount.getEmail())
+        .virtualWallet(tetherAccount.getVirtualWallet())
+        .insertDateTime(tetherAccount.getInsertDateTime())
+        .updateDateTime(tetherAccount.getUpdateDateTime())
+        .deleteDateTime(tetherAccount.getDeleteDateTime())
+        .build();
   }
 
   @Override

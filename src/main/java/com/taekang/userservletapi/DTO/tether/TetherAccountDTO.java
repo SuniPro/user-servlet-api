@@ -9,18 +9,18 @@ import lombok.*;
 @Getter
 @Setter
 public class TetherAccountDTO {
-    
-    private Long id;
 
-    private String tetherWallet;
+  private Long id;
 
-    private String email;
+  private String tetherWallet;
 
-    private String virtualWallet;
+  private String email;
 
-    private LocalDateTime insertDateTime;
+  private String virtualWallet;
 
-    private LocalDateTime updateDateTime;
+  private LocalDateTime insertDateTime;
 
-    private LocalDateTime deleteDateTime;
+  private LocalDateTime updateDateTime;
+
+  private LocalDateTime deleteDateTime;
 }
