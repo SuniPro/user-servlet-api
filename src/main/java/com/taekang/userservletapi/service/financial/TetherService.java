@@ -8,6 +8,8 @@ import java.math.BigDecimal;
 
 public interface TetherService {
 
+  TetherAccountDTO getTetherWallet(String email);
+
   TetherAccountAndDepositDTO createOrFindTetherAccount(TetherCreateDTO tetherCreateDTO);
 
   TetherAccount updateTetherWallet(TetherWalletUpdateDTO tetherWalletUpdateDTO);
