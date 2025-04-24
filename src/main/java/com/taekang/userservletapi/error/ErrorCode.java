@@ -23,7 +23,7 @@ public enum ErrorCode {
   ABILITY_IS_EMPTY("S404", "해당 직원의 평가 기록이 없습니다.", HttpStatus.BAD_REQUEST),
   NOTIFY_NOT_FOUNDED("S404", "공지를 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
   CANNOT_PROCESSING("C400", "처리할 수 없는 요청입니다.", HttpStatus.BAD_REQUEST),
-  ACCOUNT_NOT_FOUND("D404", "계좌정보를 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
+  ACCOUNT_NOT_FOUND("D404", "지갑정보를 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
   DUPLICATE_ACCOUNT("D409", "중복된 계좌입니다.", HttpStatus.CONFLICT),
   INVALID_AMOUNT("C400", "잘못된 금액입니다.", HttpStatus.BAD_REQUEST),
   DEPOSIT_VERIFICATION("C400", "계정과 금액이 일치하지 않습니다.", HttpStatus.BAD_REQUEST),

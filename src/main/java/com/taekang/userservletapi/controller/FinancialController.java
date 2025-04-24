@@ -29,6 +29,11 @@ public class FinancialController {
     return ResponseEntity.ok().body(exchangeService.getExchangeInfo());
   }
 
+  @GetMapping("tether/get/account/by/email/{email}")
+  public ResponseEntity<TetherAccountDTO> getTetherAccountByEmail(@PathVariable String email) {
+    return ResponseEntity.ok().body(tetherService.getTetherWallet(email));
+  }
+
   @PutMapping("tether/create")
   public ResponseEntity<TetherAccountAndDepositDTO> createOrFindTetherAccount(
       @RequestBody TetherCreateDTO tetherCreateDTO) {
