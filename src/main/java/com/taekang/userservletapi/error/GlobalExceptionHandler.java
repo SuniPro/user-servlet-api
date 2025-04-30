@@ -44,7 +44,7 @@ public class GlobalExceptionHandler {
   @ExceptionHandler(InvalidEmailException.class)
   public ResponseEntity<ErrorResponse> handleInvalidEmail(InvalidEmailException e) {
     return ResponseEntity.status(e.getErrorCode().getHttpStatus())
-            .body(new ErrorResponse(e.getErrorCode()));
+        .body(new ErrorResponse(e.getErrorCode()));
   }
 
   // 다른 커스텀 예외들도 이렇게 추가하면 됨

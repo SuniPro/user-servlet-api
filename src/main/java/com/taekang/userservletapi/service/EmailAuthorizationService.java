@@ -4,14 +4,13 @@ import com.taekang.userservletapi.error.FailedMessageSendException;
 import com.taekang.userservletapi.error.InvalidEmailException;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
+import java.util.regex.Pattern;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.MailSendException;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
-
-import java.util.regex.Pattern;
 
 @Slf4j
 @Service
@@ -23,14 +22,14 @@ public class EmailAuthorizationService {
   @Value("${spring.mail.username}")
   private String senderEmail;
 
-  private static final Pattern EMAIL_PATTERN = Pattern.compile(
-          "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$"
-  );
+  private static final Pattern EMAIL_PATTERN =
+      Pattern.compile("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$");
 
   @Autowired
-  public EmailAuthorizationService(JavaMailSender javaMailSender, NeverBounceService neverBounceService) {
+  public EmailAuthorizationService(
+      JavaMailSender javaMailSender, NeverBounceService neverBounceService) {
     this.javaMailSender = javaMailSender;
-      this.neverBounceService = neverBounceService;
+    this.neverBounceService = neverBounceService;
   }
 
   public String generateAuthCode() {
