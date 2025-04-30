@@ -1,11 +1,14 @@
 package com.taekang.userservletapi.service;
 
 import com.taekang.userservletapi.error.FailedMessageSendException;
+import com.taekang.userservletapi.error.InvalidEmailException;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
+import java.util.regex.Pattern;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.mail.MailSendException;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
@@ -14,13 +17,19 @@ import org.springframework.stereotype.Service;
 public class EmailAuthorizationService {
 
   private final JavaMailSender javaMailSender;
+  private final NeverBounceService neverBounceService;
 
   @Value("${spring.mail.username}")
   private String senderEmail;
 
+  private static final Pattern EMAIL_PATTERN =
+      Pattern.compile("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$");
+
   @Autowired
-  public EmailAuthorizationService(JavaMailSender javaMailSender) {
+  public EmailAuthorizationService(
+      JavaMailSender javaMailSender, NeverBounceService neverBounceService) {
     this.javaMailSender = javaMailSender;
+    this.neverBounceService = neverBounceService;
   }
 
   public String generateAuthCode() {
@@ -28,10 +37,25 @@ public class EmailAuthorizationService {
   }
 
   public void sendAuthMail(String to) throws FailedMessageSendException {
-    MimeMessage mail = createMail(to);
-    javaMailSender.send(mail);
+    if (!isValidEmailFormat(to)) {
+      throw new InvalidEmailException();
+    }
 
-    log.info("{} 주소로 발송됨", to);
+    if (!neverBounceService.isEmailValid(to)) {
+      throw new InvalidEmailException();
+    }
+
+    try {
+      MimeMessage mail = createMail(to);
+      javaMailSender.send(mail);
+      log.info("{} 주소로 발송됨", to);
+    } catch (MailSendException e) {
+      throw new FailedMessageSendException();
+    }
+  }
+
+  private boolean isValidEmailFormat(String email) {
+    return EMAIL_PATTERN.matcher(email).matches();
   }
 
   public MimeMessage createMail(String mail) {

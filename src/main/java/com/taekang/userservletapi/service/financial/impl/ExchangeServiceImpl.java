@@ -30,7 +30,7 @@ public class ExchangeServiceImpl implements ExchangeService {
   @Override
   public BigDecimal getExchangeInfo() {
     try {
-      Object request = restRequestService.getRequest(exchangeUrl);
+      Object request = restRequestService.getRequestEntity(exchangeUrl);
       String html = request.toString();
 
       Document document = Jsoup.parse(html);
