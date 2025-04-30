@@ -15,7 +15,7 @@ public class RestRequestService {
     this.restTemplate = restTemplate;
   }
 
-  public Object getRequest(String url) {
+  public Object getRequestEntity(String url) {
     ResponseEntity<String> responseEntity = restTemplate.getForEntity(url, String.class);
 
     return responseEntity.getBody();
