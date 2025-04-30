@@ -1,12 +1,10 @@
 package com.taekang.userservletapi.service;
 
 import com.taekang.userservletapi.DTO.NeverBounceEmailVerifyResponseDTO;
-import java.nio.charset.StandardCharsets;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.util.UriUtils;
 
 @Service
 public class NeverBounceService {
@@ -22,9 +20,7 @@ public class NeverBounceService {
 
   public boolean isEmailValid(String email) {
     String url =
-        String.format(
-            "https://api.neverbounce.com/v4/single/check?key=%s&email=%s",
-            apiKey, UriUtils.encode(email, StandardCharsets.UTF_8));
+        String.format("https://api.neverbounce.com/v4/single/check?key=%s&email=%s", apiKey, email);
 
     try {
       var response = restTemplate.getForObject(url, NeverBounceEmailVerifyResponseDTO.class);
