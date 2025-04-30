@@ -15,4 +15,6 @@ public class TetherDepositRequestDTO {
   private BigDecimal amount;
 
   private BigDecimal usdtAmount;
+
+  private String transactionHash;
 }

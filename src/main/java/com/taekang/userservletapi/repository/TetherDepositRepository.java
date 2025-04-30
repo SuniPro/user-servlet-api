@@ -15,6 +15,8 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface TetherDepositRepository extends JpaRepository<TetherDeposit, Long> {
 
+  boolean existsByTransactionHash(String transactionHash);
+
   Optional<TetherDeposit> findById(Long id);
 
   // 2. 계정별 전체 입금 조회 (마이페이지)

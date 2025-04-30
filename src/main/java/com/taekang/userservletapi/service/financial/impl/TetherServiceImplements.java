@@ -132,6 +132,7 @@ public class TetherServiceImplements implements TetherService {
   @Override
   @Transactional
   public TetherDeposit createDeposit(TetherDepositRequestDTO dto) {
+
     TetherAccount tetherAccount =
         tetherAccountRepository
             .findByTetherWallet(dto.getTetherWallet())
@@ -141,12 +142,17 @@ public class TetherServiceImplements implements TetherService {
       throw new InvalidAmountException();
     }
 
+    if (tetherDepositRepository.existsByTransactionHash(dto.getTransactionHash())) {
+      throw new AlreadyTransactionException();
+    }
+
     TetherDeposit tetherDeposit =
         TetherDeposit.builder()
             .tetherAccount(tetherAccount)
             .amount(dto.getAmount())
             .usdtAmount(dto.getUsdtAmount())
             .status(TransactionStatus.PENDING)
+            .transactionHash(dto.getTransactionHash())
             .accepted(false)
             .requestedAt(LocalDateTime.now(ZoneId.of("Asia/Seoul")))
             .build();

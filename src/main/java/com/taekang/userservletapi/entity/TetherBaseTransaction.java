@@ -23,6 +23,9 @@ public abstract class TetherBaseTransaction {
   @Column(name = "amount")
   private BigDecimal amount;
 
+  @Column(name = "transaction_hash")
+  private String transactionHash;
+
   @Column(name = "accepted")
   private Boolean accepted;
 

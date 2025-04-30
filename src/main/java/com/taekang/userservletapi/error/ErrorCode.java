@@ -34,7 +34,8 @@ public enum ErrorCode {
   DEPOSIT_NOT_FOUND("D404", "입금 정보를 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
   FAILED_MASSAGE_SEND("S500", "메일전송을 실패하였습니다.", HttpStatus.INTERNAL_SERVER_ERROR),
   CANNOT_FOUNDED_EXCHANGE_INFO("S500", "환율정보 수령을 실패했습니다.", HttpStatus.INTERNAL_SERVER_ERROR),
-  INVALID_EMAIL("C400", "잘못된 이메일입니다.", HttpStatus.BAD_REQUEST);
+  INVALID_EMAIL("C400", "잘못된 이메일입니다.", HttpStatus.BAD_REQUEST),
+  ALREADY_TRANSACTION("C400", "해당 결제건의 해시값을 입력하세요.", HttpStatus.BAD_REQUEST);
 
   private final String code;
   private final String message;
