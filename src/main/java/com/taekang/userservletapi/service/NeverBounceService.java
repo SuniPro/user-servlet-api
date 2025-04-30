@@ -20,9 +20,7 @@ public class NeverBounceService {
 
   public boolean isEmailValid(String email) {
     String url =
-        String.format(
-            "https://api.neverbounce.com/v4/single/check?key=%s&email=%s",
-            apiKey, email);
+        String.format("https://api.neverbounce.com/v4/single/check?key=%s&email=%s", apiKey, email);
 
     try {
       var response = restTemplate.getForObject(url, NeverBounceEmailVerifyResponseDTO.class);
