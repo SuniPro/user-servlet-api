@@ -22,7 +22,13 @@ public class TetherAccount {
   @Column(name = "email", nullable = false)
   private String email;
 
-  @Column(name = "virtual_wallet", nullable = true)
+  @Column(name = "site", nullable = false)
+  private String site;
+
+  @Column(name = "memo", nullable = false)
+  private String memo;
+
+  @Column(name = "virtual_wallet")
   private String virtualWallet;
 
   @Column(name = "insert_date_time")

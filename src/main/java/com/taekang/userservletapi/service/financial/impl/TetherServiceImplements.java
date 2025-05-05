@@ -87,6 +87,7 @@ public class TetherServiceImplements implements TetherService {
           tetherAccountRepository.save(
               TetherAccount.builder()
                   .email(dto.getEmail())
+                  .site(dto.getSite())
                   .tetherWallet(dto.getTetherWallet())
                   .insertDateTime(LocalDateTime.now(ZoneId.of("Asia/Seoul")))
                   .build());
