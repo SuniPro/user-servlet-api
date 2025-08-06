@@ -5,8 +5,8 @@ import org.springframework.http.HttpStatus;
 
 /**
  * 커스텀 예외에서 전달할 ErrorCode 리스트입니다. code의 prefix는 아래와 같이 정의합니다. C = Controller, S = Service 단에서, D =
- * Database에서 발생된 에러 C의 경우는 보통 rest API 소통 문제, S의 경우 database 에서 가져온 데이터의 가공 처리 중 발생한 문제 D의 경우는
- * 쓰레드 풀에서 요청한 데이터가 없을 경우로 정의된다고 판단하시면 됩니다. Code 의 숫자 나열은 HTTP 의 ERROR CODE에서 차용합니다. Code 만 받아도 이걸 본
+ * Database에서 발생된 에러 C의 경우는 보통 rest API 소통 문제, S의 경우 database 에서 가져온 데이터의 가공 처리 중 발생한 문제 D의 경우는 쓰레드
+ * 풀에서 요청한 데이터가 없을 경우로 정의된다고 판단하시면 됩니다. Code 의 숫자 나열은 HTTP 의 ERROR CODE에서 차용합니다. Code 만 받아도 이걸 본
  * 개발자는 바로 어떤 문제인지 식별되어야합니다.
  */
 @Getter
@@ -44,9 +44,9 @@ public enum ErrorCode {
   /* USER ERROR CODE */
   INVALID_EMAIL("C400", "잘못된 이메일입니다.", HttpStatus.BAD_REQUEST),
   CANNOT_FOUND_USER("D404", "유저 정보를 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
-  ALREADY_EXIST_USERNAME("D400", "이미 존재하는 유저이름입니다.",  HttpStatus.BAD_REQUEST),
+  ALREADY_EXIST_USERNAME("D400", "이미 존재하는 유저이름입니다.", HttpStatus.BAD_REQUEST),
   PASSWORD_INCORRECT("C401", "잘못된 패스워드입니다.", HttpStatus.UNAUTHORIZED),
-  ALREADY_EXIST_EMAIL("D400", "이미 존재하는 이메일입니다.",  HttpStatus.BAD_REQUEST);
+  ALREADY_EXIST_EMAIL("D400", "이미 존재하는 이메일입니다.", HttpStatus.BAD_REQUEST);
 
   private final String code;
   private final String message;

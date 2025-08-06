@@ -1,9 +1,7 @@
 package com.taekang.userservletapi.entity;
 
-
-import lombok.Getter;
-
 import java.util.Arrays;
+import lombok.Getter;
 
 @Getter
 public enum RoleType {
@@ -18,16 +16,11 @@ public enum RoleType {
     this.code = code;
   }
 
-    /** ADMINISTRATOR == 0
-   * GUEST == 1
-   * USER == 2
-   * VIP == 3
-   * */
+  /** ADMINISTRATOR == 0 GUEST == 1 USER == 2 VIP == 3 */
   public static RoleType fromCode(int code) {
     return Arrays.stream(values())
-            .filter(l -> l.code == code)
-            .findFirst()
-            .orElseThrow(() ->
-                    new IllegalArgumentException("Unknown UserLevel: " + code));
+        .filter(l -> l.code == code)
+        .findFirst()
+        .orElseThrow(() -> new IllegalArgumentException("Unknown UserLevel: " + code));
   }
 }

@@ -30,10 +30,7 @@ public class CustomUserDetailsService implements UserDetailsService {
   @Override
   @Transactional(readOnly = true)
   public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-    User user =
-        userRepository
-            .findByUsername(username)
-            .orElseThrow(CannotFoundUserException::new);
+    User user = userRepository.findByUsername(username).orElseThrow(CannotFoundUserException::new);
 
     CustomUserDTO DTO = mapper.map(user, CustomUserDTO.class);
 
@@ -42,10 +39,7 @@ public class CustomUserDetailsService implements UserDetailsService {
 
   @Transactional(readOnly = true)
   public CustomUserDTO loadUserByEmail(String email) {
-    User user =
-        userRepository
-            .findByEmail(email)
-                .orElseThrow(CannotFoundUserException::new);
+    User user = userRepository.findByEmail(email).orElseThrow(CannotFoundUserException::new);
 
     return mapper.map(user, CustomUserDTO.class);
   }

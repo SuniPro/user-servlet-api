@@ -20,77 +20,87 @@ import org.springframework.stereotype.Service;
 @Service
 public class UserServiceImplements implements UserService {
 
-    private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
-    private final ModelMapper modelMapper;
+  private final UserRepository userRepository;
+  private final PasswordEncoder passwordEncoder;
+  private final ModelMapper modelMapper;
 
-    private final JwtUtil jwtUtil;
+  private final JwtUtil jwtUtil;
 
-    @Autowired
-    public UserServiceImplements(UserRepository userRepository, PasswordEncoder passwordEncoder, ModelMapper modelMapper, JwtUtil jwtUtil) {
-        this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
-        this.modelMapper = modelMapper;
-        this.jwtUtil = jwtUtil;
-    }
-    
-    @Override
-    @Transactional
-    public UserDTO createUser(@Valid UserCreateRequestDTO userCreateRequestDTO) {
-        if (userRepository.existsByEmail(userCreateRequestDTO.getEmail())) {
+  @Autowired
+  public UserServiceImplements(
+      UserRepository userRepository,
+      PasswordEncoder passwordEncoder,
+      ModelMapper modelMapper,
+      JwtUtil jwtUtil) {
+    this.userRepository = userRepository;
+    this.passwordEncoder = passwordEncoder;
+    this.modelMapper = modelMapper;
+    this.jwtUtil = jwtUtil;
+  }
+
+  @Override
+  @Transactional
+  public UserDTO createUser(@Valid UserCreateRequestDTO userCreateRequestDTO) {
+    if (userRepository.existsByEmail(userCreateRequestDTO.getEmail())) {
       throw new AlreadyExistUserEmailException();
-        }
+    }
 
-        if (userRepository.existsByUsername(userCreateRequestDTO.getUsername())) {
+    if (userRepository.existsByUsername(userCreateRequestDTO.getUsername())) {
       throw new AlreadyExistUsernameException();
-        }
-
-        User user = User.builder()
-                .email(userCreateRequestDTO.getEmail())
-                .username(userCreateRequestDTO.getUsername())
-                .password(passwordEncoder.encode(userCreateRequestDTO.getPassword()))
-                .roleType(RoleType.USER)
-                .isBlock(false)
-                .build();
-
-        return modelMapper.map(userRepository.save(user), UserDTO.class);
     }
 
-    @Override
-    public Page<UserDTO> getAllUser() {
-        return null;
+    User user =
+        User.builder()
+            .email(userCreateRequestDTO.getEmail())
+            .username(userCreateRequestDTO.getUsername())
+            .password(passwordEncoder.encode(userCreateRequestDTO.getPassword()))
+            .roleType(RoleType.USER)
+            .isBlock(false)
+            .build();
+
+    return modelMapper.map(userRepository.save(user), UserDTO.class);
+  }
+
+  @Override
+  public Page<UserDTO> getAllUser() {
+    return null;
+  }
+
+  @Override
+  public UserDTO getUserById(Long userId) {
+    return null;
+  }
+
+  @Override
+  public UserDTO updateUser(Long userId, UserCreateRequestDTO request) {
+    return null;
+  }
+
+  @Override
+  @Transactional
+  public UserDTO passwordChange(UserDTO userDTO, PasswordChangeDTO passwordChangeDTO) {
+    if (userRepository.existsByEmail(userDTO.getEmail())) {
+      throw new AlreadyExistUserEmailException();
     }
 
-    @Override
-    public UserDTO getUserById(Long userId) {
-        return null;
+    if (!passwordEncoder.matches(
+        passwordChangeDTO.getOldPassword(),
+        userRepository
+            .findByEmail(userDTO.getEmail())
+            .orElseThrow(CannotFoundUserException::new)
+            .getPassword())) {
+      throw new PasswordIncorrectException();
     }
 
-    @Override
-    public UserDTO updateUser(Long userId, UserCreateRequestDTO request) {
-        return null;
-    }
+    User user =
+        User.builder()
+            .id(userDTO.getId())
+            .password(passwordEncoder.encode(passwordChangeDTO.getNewPassword()))
+            .build();
 
-    @Override
-    @Transactional
-    public UserDTO passwordChange(UserDTO userDTO, PasswordChangeDTO passwordChangeDTO) {
-        if (userRepository.existsByEmail(userDTO.getEmail())) {
-            throw new AlreadyExistUserEmailException();
-        }
+    return modelMapper.map(user, UserDTO.class);
+  }
 
-        if (!passwordEncoder.matches(passwordChangeDTO.getOldPassword(), userRepository.findByEmail(userDTO.getEmail()).orElseThrow(CannotFoundUserException::new).getPassword())){
-            throw new PasswordIncorrectException();
-        }
-
-        User user = User.builder()
-                .id(userDTO.getId())
-                .password(passwordEncoder.encode(passwordChangeDTO.getNewPassword()))
-                .build();
-
-        return modelMapper.map(user, UserDTO.class);
-    }
-
-    @Override
-    public void deleteUser(Long userId) {
-    }
+  @Override
+  public void deleteUser(Long userId) {}
 }

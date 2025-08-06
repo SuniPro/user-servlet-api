@@ -1,11 +1,10 @@
 package com.taekang.userservletapi.error;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import java.time.LocalDateTime;
 
 @Getter
 @AllArgsConstructor
@@ -27,8 +26,8 @@ public class ErrorResponse {
   }
 
   public ErrorResponse(ErrorCode errorCode, String detailMessage) {
-    this.httpStatus  = errorCode.getHttpStatus().value();
-    this.code    = errorCode.getCode();
+    this.httpStatus = errorCode.getHttpStatus().value();
+    this.code = errorCode.getCode();
     this.message = errorCode.getMessage();
     this.detailMessage = detailMessage;
   }
