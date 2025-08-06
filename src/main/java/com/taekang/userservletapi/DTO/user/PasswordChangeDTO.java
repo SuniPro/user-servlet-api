@@ -2,17 +2,17 @@ package com.taekang.userservletapi.DTO.user;
 
 import lombok.*;
 
-@Getter
 @Setter
+@Getter
 @Builder(toBuilder = true)
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class UserCreateRequestDTO {
-
-  private String username;
+public class PasswordChangeDTO {
 
   private String email;
 
-  private String password;
+  private String oldPassword;
+
+  private String newPassword;
 }

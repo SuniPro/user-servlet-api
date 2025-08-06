@@ -31,7 +31,7 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
 
       switch (exception) {
         case "TokenExpiredException" -> errorCode = ErrorCode.TOKEN_EXPIRE;
-        case "JWTVerificationException" -> errorCode = ErrorCode.TOKEN_ABNORMALITY;
+        case "JWTVerificationException" -> errorCode = ErrorCode.TOKEN_NOT_VALIDATE;
         default -> errorCode = ErrorCode.CANNOT_FIND_TOKEN;
       }
     }

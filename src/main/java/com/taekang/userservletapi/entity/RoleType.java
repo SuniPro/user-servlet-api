@@ -1,24 +1,26 @@
 package com.taekang.userservletapi.entity;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonValue;
+import java.util.Arrays;
+import lombok.Getter;
 
+@Getter
 public enum RoleType {
-  VIP,
-  BASIC;
+  ADMINISTRATOR(0),
+  GUEST(1),
+  USER(2),
+  VIP(3);
 
-  @JsonCreator
-  public static EmployeeType fromString(String role) {
-    for (EmployeeType type : EmployeeType.values()) {
-      if (type.name().equalsIgnoreCase(role)) {
-        return type;
-      }
-    }
-    throw new IllegalArgumentException("Invalid RoleType: " + role);
+  private final int code;
+
+  RoleType(int code) {
+    this.code = code;
   }
 
-  @JsonValue
-  public String toValue() {
-    return name().toLowerCase(); // JSON으로 출력될 때 소문자로 변환
+  /** ADMINISTRATOR == 0 GUEST == 1 USER == 2 VIP == 3 */
+  public static RoleType fromCode(int code) {
+    return Arrays.stream(values())
+        .filter(l -> l.code == code)
+        .findFirst()
+        .orElseThrow(() -> new IllegalArgumentException("Unknown UserLevel: " + code));
   }
 }

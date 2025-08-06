@@ -9,29 +9,25 @@ import lombok.Setter;
 @Setter
 public class CustomUserDTO extends UserDTO {
 
+  private Long id;
+
   private String username;
-
-  private String email;
-
-  private String password;
 
   private RoleType roleType;
 
-  private String profileImage;
+  private String email;
 
-  private String profileMessage;
+  private boolean isBlock;
 
-  private String personalColor;
-
-  private LocalDateTime insertDate;
+  private LocalDateTime insertDateTime;
 
   private String insertId;
 
-  private LocalDateTime updateDate;
+  private LocalDateTime updateDateTime;
 
   private String updateId;
 
-  private LocalDateTime deleteDate;
+  private LocalDateTime deleteDateTime;
 
   private String deleteId;
 }
