@@ -9,5 +9,15 @@
       "name": "exchange.rate.class",
       "type": "java.lang.String",
       "description": "Description for exchange.rate.class."
+    },
+    {
+      "name": "neverbounce.api.key",
+      "type": "java.lang.String",
+      "description": "Description for neverbounce.api.key."
+    },
+    {
+      "name": "app.redis.refresh-token-prefix",
+      "type": "java.lang.String",
+      "description": "Description for app.redis.refresh-token-prefix."
     }
   ] }
