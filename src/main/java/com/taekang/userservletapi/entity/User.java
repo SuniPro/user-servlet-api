@@ -1,47 +1,61 @@
 package com.taekang.userservletapi.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import java.math.BigDecimal;
+import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedBy;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
+import java.time.LocalDateTime;
 
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE) // 빌더 사용 시 필수
 @Builder
+@EntityListeners(AuditingEntityListener.class)
 public class User {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
+  @Column(name = "username", nullable = false)
   private String username;
 
-  private BigDecimal money;
-  private BigDecimal sportsMoney;
-  private BigDecimal casinoMoney;
+  @Column(name = "password", nullable = false)
+  private String password;
 
-  public void deposit(BigDecimal amount) {
-    this.money = this.money.add(amount);
-  }
+  @Column(name = "roleType", nullable = false)
+  private RoleType roleType;
 
-  public void withdraw(BigDecimal amount) {
-    if (this.money.compareTo(amount) < 0) {
-      throw new IllegalArgumentException("잔액 부족");
-    }
-    this.money = this.money.subtract(amount);
-  }
+  @Column(name = "email", nullable = false)
+  private String email;
 
-  public void betOnSports(BigDecimal amount) {
-    withdraw(amount);
-    this.sportsMoney = this.sportsMoney.add(amount);
-  }
+  @Column(name = "is_block", nullable = false)
+  private boolean isBlock;
 
-  public void betOnCasino(BigDecimal amount) {
-    withdraw(amount);
-    this.casinoMoney = this.casinoMoney.add(amount);
-  }
+  @CreatedDate
+  @Column(name = "insert_date_time", nullable = false, updatable = false)
+  private LocalDateTime insertDateTime;
+
+  @CreatedBy
+  @Column(name = "insert_id", nullable = false, updatable = false)
+  private String insertId;
+
+  @LastModifiedDate
+  @Column(name = "update_date_time")
+  private LocalDateTime updateDateTime;
+
+  @LastModifiedBy
+  @Column(name = "update_id")
+  private String updateId;
+
+  @Column(name = "delete_date_time")
+  private LocalDateTime deleteDateTime;
+
+  @Column(name = "delete_id")
+  private String deleteId;
 }

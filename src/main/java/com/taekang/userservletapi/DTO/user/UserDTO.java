@@ -2,34 +2,35 @@ package com.taekang.userservletapi.DTO.user;
 
 import com.taekang.userservletapi.entity.RoleType;
 import java.time.LocalDateTime;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
 @Setter
+@Builder(toBuilder = true)
+@NoArgsConstructor
+@AllArgsConstructor
+@ToString
 public class UserDTO {
 
-  private Integer id;
+  private Long id;
 
   private String username;
 
-  private String phoneNumber;
+  private RoleType roleType;
 
   private String email;
 
-  private String password;
+  private boolean isBlock;
 
-  private RoleType roleType;
-
-  private LocalDateTime insertDate;
+  private LocalDateTime insertDateTime;
 
   private String insertId;
 
-  private LocalDateTime updateDate;
+  private LocalDateTime updateDateTime;
 
   private String updateId;
 
-  private LocalDateTime deleteDate;
+  private LocalDateTime deleteDateTime;
 
   private String deleteId;
 }
