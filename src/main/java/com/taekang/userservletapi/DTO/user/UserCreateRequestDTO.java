@@ -1,14 +1,18 @@
 package com.taekang.userservletapi.DTO.user;
 
-import com.taekang.userservletapi.entity.RoleType;
+import lombok.*;
 
+@Getter
+@Setter
+@Builder(toBuilder = true)
+@NoArgsConstructor
+@AllArgsConstructor
+@ToString
 public class UserCreateRequestDTO {
 
   private String username;
 
+  private String email;
+
   private String password;
-
-  private RoleType roleType;
-
-  private String phone;
 }
