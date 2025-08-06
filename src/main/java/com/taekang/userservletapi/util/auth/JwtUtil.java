@@ -7,6 +7,7 @@ import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.time.ZonedDateTime;
 import java.util.Date;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
@@ -18,22 +19,30 @@ import org.springframework.stereotype.Component;
 public class JwtUtil {
 
   private final Key key;
+
+  @Getter
   private final long accessTokenExpTime;
+  @Getter
+  private final long refreshTokenExpTime;
 
   public JwtUtil(
       @Value("${jwt.secret}") String secretKey,
-      @Value("${jwt.expiration_time}") long accessTokenExpTime) {
+      @Value("${jwt.access_token.expiration_time}") long accessTokenExpTime,
+      @Value("${jwt.refresh_token.expiration_time}") long refreshTokenExpTime
+  ) {
     this.key = Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8));
     this.accessTokenExpTime = accessTokenExpTime;
+    this.refreshTokenExpTime = refreshTokenExpTime;
   }
 
-  /*
-   * Access Token 생성
-   * @param customUserDto
-   * @return Access Token String
-   */
+  /** Access Token 생성 */
   public String createAccessToken(CustomUserDTO customUserDTO) {
-    return createToken(customUserDTO, accessTokenExpTime);
+    return createToken(customUserDTO, accessTokenExpTime, "access_token");
+  }
+
+  /** Refresh Token 생성 */
+  public String createRefreshToken(CustomUserDTO customUserDTO) {
+    return createToken(customUserDTO, refreshTokenExpTime, "refresh");
   }
 
   /**
@@ -43,21 +52,22 @@ public class JwtUtil {
    * @param expireTime : 토큰의 만료시간입니다.
    * @return JWT String
    */
-  private String createToken(CustomUserDTO customUserDto, long expireTime) {
+  private String createToken(CustomUserDTO customUserDto, long expireTime, String type) {
     Claims claims = Jwts.claims();
     claims.put("username", customUserDto.getUsername());
     claims.put("email", customUserDto.getEmail());
-    claims.put("role", customUserDto.getRoleType());
+    claims.put("roleType", customUserDto.getRoleType());
+    claims.put("type", type);  // 토큰 종류를 claim에 명시
 
     ZonedDateTime now = ZonedDateTime.now();
-    ZonedDateTime tokenValidity = now.plusSeconds(expireTime);
+    ZonedDateTime validUntil = now.plusSeconds(expireTime);
 
     return Jwts.builder()
-        .setClaims(claims)
-        .setIssuedAt(Date.from(now.toInstant()))
-        .setExpiration(Date.from(tokenValidity.toInstant()))
-        .signWith(key, SignatureAlgorithm.HS256)
-        .compact();
+            .setClaims(claims)
+            .setIssuedAt(Date.from(now.toInstant()))
+            .setExpiration(Date.from(validUntil.toInstant()))
+            .signWith(key, SignatureAlgorithm.HS256)
+            .compact();
   }
 
   /**
