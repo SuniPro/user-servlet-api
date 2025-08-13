@@ -20,16 +20,13 @@ public class JwtUtil {
 
   private final Key key;
 
-  @Getter
-  private final long accessTokenExpTime;
-  @Getter
-  private final long refreshTokenExpTime;
+  @Getter private final long accessTokenExpTime;
+  @Getter private final long refreshTokenExpTime;
 
   public JwtUtil(
       @Value("${jwt.secret}") String secretKey,
       @Value("${jwt.access_token.expiration_time}") long accessTokenExpTime,
-      @Value("${jwt.refresh_token.expiration_time}") long refreshTokenExpTime
-  ) {
+      @Value("${jwt.refresh_token.expiration_time}") long refreshTokenExpTime) {
     this.key = Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8));
     this.accessTokenExpTime = accessTokenExpTime;
     this.refreshTokenExpTime = refreshTokenExpTime;
@@ -57,17 +54,17 @@ public class JwtUtil {
     claims.put("username", customUserDto.getUsername());
     claims.put("email", customUserDto.getEmail());
     claims.put("roleType", customUserDto.getRoleType());
-    claims.put("type", type);  // 토큰 종류를 claim에 명시
+    claims.put("type", type); // 토큰 종류를 claim에 명시
 
     ZonedDateTime now = ZonedDateTime.now();
     ZonedDateTime validUntil = now.plusSeconds(expireTime);
 
     return Jwts.builder()
-            .setClaims(claims)
-            .setIssuedAt(Date.from(now.toInstant()))
-            .setExpiration(Date.from(validUntil.toInstant()))
-            .signWith(key, SignatureAlgorithm.HS256)
-            .compact();
+        .setClaims(claims)
+        .setIssuedAt(Date.from(now.toInstant()))
+        .setExpiration(Date.from(validUntil.toInstant()))
+        .signWith(key, SignatureAlgorithm.HS256)
+        .compact();
   }
 
   /**

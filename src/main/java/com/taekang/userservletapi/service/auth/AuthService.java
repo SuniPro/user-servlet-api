@@ -33,30 +33,27 @@ public class AuthService {
 
   @Autowired
   public AuthService(
-          JwtUtil jwtUtil,
-          RedisTemplate<String, String> redisTemplate,
-          CustomUserDetailsService customUserDetailsService, PasswordEncoder passwordEncoder, UserRepository userRepository) {
+      JwtUtil jwtUtil,
+      RedisTemplate<String, String> redisTemplate,
+      CustomUserDetailsService customUserDetailsService,
+      PasswordEncoder passwordEncoder,
+      UserRepository userRepository) {
     this.jwtUtil = jwtUtil;
     this.redisTemplate = redisTemplate;
     this.customUserDetailsService = customUserDetailsService;
-      this.passwordEncoder = passwordEncoder;
-      this.userRepository = userRepository;
+    this.passwordEncoder = passwordEncoder;
+    this.userRepository = userRepository;
   }
 
-  /**
-   * 로그인 시:
-   * 1) 사용자 인증
-   * 2) Access/Refresh 토큰 생성
-   * 3) Redis에 Refresh 토큰 저장
-   * 4) TokenResponse 반환
-   */
+  /** 로그인 시: 1) 사용자 인증 2) Access/Refresh 토큰 생성 3) Redis에 Refresh 토큰 저장 4) TokenResponse 반환 */
   @Transactional
   public TokenResponse signIn(SignInDTO signInDTO) {
     // — 1) UserDetails 로드(인증)
     UserDetails userDetails = customUserDetailsService.loadUserByUsername(signInDTO.getEmail());
-    User user = userRepository.findByEmail(signInDTO.getEmail()).orElseThrow(CannotFoundUserException::new);
+    User user =
+        userRepository.findByEmail(signInDTO.getEmail()).orElseThrow(CannotFoundUserException::new);
 
-    if (!passwordEncoder.matches(signInDTO.getPassword(), user.getPassword())){
+    if (!passwordEncoder.matches(signInDTO.getPassword(), user.getPassword())) {
       throw new PasswordIncorrectException();
     }
 
@@ -64,24 +61,22 @@ public class AuthService {
     CustomUserDTO userDto = ((CustomUserDetails) userDetails).customUserDTO();
 
     // — 3) 토큰 생성
-    String accessToken  = jwtUtil.createAccessToken(userDto);
+    String accessToken = jwtUtil.createAccessToken(userDto);
     String refreshToken = jwtUtil.createRefreshToken(userDto);
 
     // — 4) Redis에 Refresh Token 저장 (key: refresh:{email})
     String key = refreshTokenPrefix + userDto.getEmail();
-    redisTemplate.opsForValue()
-            .set(key, refreshToken,
-                    Duration.ofSeconds(jwtUtil.getRefreshTokenExpTime()));
+    redisTemplate
+        .opsForValue()
+        .set(key, refreshToken, Duration.ofSeconds(jwtUtil.getRefreshTokenExpTime()));
 
     // — 5) 응답 DTO 반환
     return new TokenResponse(
-            accessToken,
-            refreshToken,
-            jwtUtil.getAccessTokenExpTime(),
-            jwtUtil.getRefreshTokenExpTime()
-    );
+        accessToken,
+        refreshToken,
+        jwtUtil.getAccessTokenExpTime(),
+        jwtUtil.getRefreshTokenExpTime());
   }
-
 
   /** Refresh 토큰 재발급 */
   public TokenResponse refresh(String oldRefreshToken) {

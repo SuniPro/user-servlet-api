@@ -10,9 +10,9 @@ import lombok.*;
 @ToString
 public class PasswordChangeDTO {
 
-    private String email;
+  private String email;
 
-    private String oldPassword;
+  private String oldPassword;
 
-    private String newPassword;
+  private String newPassword;
 }

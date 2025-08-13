@@ -11,47 +11,43 @@ public class GlobalExceptionHandler {
   @ExceptionHandler(BusinessException.class)
   public ResponseEntity<ErrorResponse> handleBusinessException(BusinessException e) {
     ErrorCode code = e.getErrorCode();
-    return ResponseEntity
-            .status(code.getHttpStatus())
-            .body(new ErrorResponse(code));
+    return ResponseEntity.status(code.getHttpStatus()).body(new ErrorResponse(code));
   }
 
   /** DTO 검증 실패를 핸들링합니다. */
   @ExceptionHandler(MethodArgumentNotValidException.class)
   public ResponseEntity<ErrorResponse> handleValidation(MethodArgumentNotValidException ex) {
-    String detail = ex.getBindingResult()
-            .getFieldErrors()
-            .stream()
+    String detail =
+        ex.getBindingResult().getFieldErrors().stream()
             .findFirst()
             .map(err -> err.getField() + ": " + err.getDefaultMessage())
             .orElse("Validation failed");
-    ErrorResponse err = new ErrorResponse(
-            ErrorCode.VALIDATION_FAILED, detail
-    );
-    return ResponseEntity
-            .status(ErrorCode.VALIDATION_FAILED.getHttpStatus())
-            .body(err);
+    ErrorResponse err = new ErrorResponse(ErrorCode.VALIDATION_FAILED, detail);
+    return ResponseEntity.status(ErrorCode.VALIDATION_FAILED.getHttpStatus()).body(err);
   }
 
   @ExceptionHandler(IsNotAccessTokenException.class)
-  public ResponseEntity<ErrorResponse> handleIsNotAccessTokenException(IsNotAccessTokenException e) {
+  public ResponseEntity<ErrorResponse> handleIsNotAccessTokenException(
+      IsNotAccessTokenException e) {
 
     return ResponseEntity.status(e.getErrorCode().getHttpStatus())
-            .body(new ErrorResponse(e.getErrorCode()));
+        .body(new ErrorResponse(e.getErrorCode()));
   }
 
   @ExceptionHandler(IsNotRefreshTokenException.class)
-  public ResponseEntity<ErrorResponse> handleIsNotRefreshTokenException(IsNotRefreshTokenException e) {
+  public ResponseEntity<ErrorResponse> handleIsNotRefreshTokenException(
+      IsNotRefreshTokenException e) {
 
     return ResponseEntity.status(e.getErrorCode().getHttpStatus())
-            .body(new ErrorResponse(e.getErrorCode()));
+        .body(new ErrorResponse(e.getErrorCode()));
   }
 
   @ExceptionHandler(TokenNotValidateException.class)
-  public ResponseEntity<ErrorResponse> handleTokenNotValidateException(TokenNotValidateException e) {
+  public ResponseEntity<ErrorResponse> handleTokenNotValidateException(
+      TokenNotValidateException e) {
 
     return ResponseEntity.status(e.getErrorCode().getHttpStatus())
-            .body(new ErrorResponse(e.getErrorCode()));
+        .body(new ErrorResponse(e.getErrorCode()));
   }
 
   @ExceptionHandler(WalletVerification.class)
@@ -94,21 +90,23 @@ public class GlobalExceptionHandler {
   }
 
   @ExceptionHandler(CannotFoundUserException.class)
-  public ResponseEntity<ErrorResponse> handleCannotFoundUserException(CannotFoundUserException e){
+  public ResponseEntity<ErrorResponse> handleCannotFoundUserException(CannotFoundUserException e) {
     return ResponseEntity.status(e.getErrorCode().getHttpStatus())
         .body(new ErrorResponse(e.getErrorCode()));
   }
 
   @ExceptionHandler(AlreadyExistUserEmailException.class)
-  public ResponseEntity<ErrorResponse> handleAlreadyExistUserEmailException(AlreadyExistUserEmailException e){
+  public ResponseEntity<ErrorResponse> handleAlreadyExistUserEmailException(
+      AlreadyExistUserEmailException e) {
     return ResponseEntity.status(e.getErrorCode().getHttpStatus())
-            .body(new ErrorResponse(e.getErrorCode()));
+        .body(new ErrorResponse(e.getErrorCode()));
   }
 
   @ExceptionHandler(AlreadyExistUsernameException.class)
-  public ResponseEntity<ErrorResponse> handleAlreadyExistUsernameException(AlreadyExistUsernameException e){
+  public ResponseEntity<ErrorResponse> handleAlreadyExistUsernameException(
+      AlreadyExistUsernameException e) {
     return ResponseEntity.status(e.getErrorCode().getHttpStatus())
-            .body(new ErrorResponse(e.getErrorCode()));
+        .body(new ErrorResponse(e.getErrorCode()));
   }
 
   //  // 다른 커스텀 예외들도 이렇게 추가하면 됨
