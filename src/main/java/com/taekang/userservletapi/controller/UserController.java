@@ -27,7 +27,7 @@ public class UserController {
   @Autowired
   public UserController(UserService userService, AuthService authService) {
     this.userService = userService;
-      this.authService = authService;
+    this.authService = authService;
   }
 
   @PostMapping("create")
@@ -35,33 +35,34 @@ public class UserController {
       @RequestBody UserCreateRequestDTO userCreateRequestDTO) {
     UserDTO user = userService.createUser(userCreateRequestDTO);
 
-    SignInDTO signInDTO = SignInDTO.builder()
+    SignInDTO signInDTO =
+        SignInDTO.builder()
             .email(userCreateRequestDTO.getEmail())
             .password(userCreateRequestDTO.getPassword())
             .build();
     TokenResponse tokenResponse = authService.signIn(signInDTO);
 
     ResponseCookie accessCookie =
-            ResponseCookie.from("access-token", tokenResponse.getAccessToken())
-                    .httpOnly(true)
-                    .secure(true)
-                    .path("/")
-                    .maxAge(tokenResponse.getAccessTokenExpiresIn())
-                    .sameSite("Strict")
-                    .build();
+        ResponseCookie.from("access-token", tokenResponse.getAccessToken())
+            .httpOnly(true)
+            .secure(true)
+            .path("/")
+            .maxAge(tokenResponse.getAccessTokenExpiresIn())
+            .sameSite("Strict")
+            .build();
 
     // Refresh Token Cookie
     ResponseCookie refreshCookie =
-            ResponseCookie.from("refresh-token", tokenResponse.getRefreshToken())
-                    .httpOnly(true)
-                    .secure(true)
-                    .path("/user/auth/refresh")
-                    .maxAge(tokenResponse.getRefreshTokenExpiresIn())
-                    .sameSite("Strict")
-                    .build();
+        ResponseCookie.from("refresh-token", tokenResponse.getRefreshToken())
+            .httpOnly(true)
+            .secure(true)
+            .path("/user/auth/refresh")
+            .maxAge(tokenResponse.getRefreshTokenExpiresIn())
+            .sameSite("Strict")
+            .build();
 
     return ResponseEntity.ok()
-            .header(HttpHeaders.SET_COOKIE, accessCookie.toString(), refreshCookie.toString())
-            .body(user);
+        .header(HttpHeaders.SET_COOKIE, accessCookie.toString(), refreshCookie.toString())
+        .body(user);
   }
 }

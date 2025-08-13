@@ -64,13 +64,16 @@ public class SecurityConfig {
         UsernamePasswordAuthenticationFilter.class);
 
     // ★ 인증/인가 규칙 — 단 한 번만 선언, anyRequest는 항상 마지막
-    http.authorizeHttpRequests(auth -> auth
-            .requestMatchers(AUTH_WHITELIST).permitAll()
-            .requestMatchers(CORS_WHITELIST).permitAll()
-            // 필요 시 HttpMethod 별 매칭 예시:
-            // .requestMatchers(HttpMethod.GET, "/files/**").permitAll()
-            .anyRequest().authenticated()
-    );
+    http.authorizeHttpRequests(
+        auth ->
+            auth.requestMatchers(AUTH_WHITELIST)
+                .permitAll()
+                .requestMatchers(CORS_WHITELIST)
+                .permitAll()
+                // 필요 시 HttpMethod 별 매칭 예시:
+                // .requestMatchers(HttpMethod.GET, "/files/**").permitAll()
+                .anyRequest()
+                .authenticated());
 
     return http.build();
   }
