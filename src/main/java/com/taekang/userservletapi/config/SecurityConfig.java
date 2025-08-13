@@ -63,30 +63,17 @@ public class SecurityConfig {
         new JwtAuthFilter(customUserDetailsService, jwtUtil),
         UsernamePasswordAuthenticationFilter.class);
 
-    // 인증·인가 규칙 (한 번만 선언!)
-    http.authorizeHttpRequests(
-        auth ->
-            auth
-                // 인증 없이 접근 허용
-                .requestMatchers(AUTH_WHITELIST)
-                .permitAll()
-                // CORS에서 허용할 엔드포인트 (추가 설정 없으면 그냥 permitAll과 같음)
-                .requestMatchers(CORS_WHITELIST)
-                .permitAll()
-                // 그 외는 무조건 인증
-                .anyRequest()
-                .authenticated());
-
-    // 요청 인증 및 권한 설정
+    // ★ 인증/인가 규칙 — 단 한 번만 선언, anyRequest는 항상 마지막
     http.authorizeHttpRequests(
         auth ->
             auth.requestMatchers(AUTH_WHITELIST)
-                .permitAll() // 인증 없이 접근 허용
+                .permitAll()
                 .requestMatchers(CORS_WHITELIST)
-                .permitAll() // CORS 경로도 인증 없이 허용
+                .permitAll()
+                // 필요 시 HttpMethod 별 매칭 예시:
+                // .requestMatchers(HttpMethod.GET, "/files/**").permitAll()
                 .anyRequest()
-                .authenticated() // 그 외 요청은 인증 필요
-        );
+                .authenticated());
 
     return http.build();
   }
