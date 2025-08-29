@@ -1,12 +1,15 @@
 package com.taekang.userservletapi.controller;
 
-import com.taekang.userservletapi.DTO.tether.*;
-import com.taekang.userservletapi.entity.TetherAccount;
-import com.taekang.userservletapi.entity.TetherDeposit;
-import com.taekang.userservletapi.service.financial.ExchangeService;
-import com.taekang.userservletapi.service.financial.TetherService;
-import java.math.BigDecimal;
+import com.taekang.userservletapi.DTO.TokenResponse;
+import com.taekang.userservletapi.DTO.crypto.*;
+import com.taekang.userservletapi.entity.user.CryptoAccount;
+import com.taekang.userservletapi.service.auth.AuthService;
+import com.taekang.userservletapi.service.financial.CryptoService;
+import com.taekang.userservletapi.util.auth.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,47 +17,80 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("financial")
 public class FinancialController {
 
-  private final TetherService tetherService;
+  @Value("${server.servlet.context-path}")
+  private String contextPath;
 
-  private final ExchangeService exchangeService;
+  private final CryptoService cryptoService;
+  private final AuthService authService;
+  private final JwtUtil jwtUtil;
 
   @Autowired
-  public FinancialController(TetherService tetherService, ExchangeService exchangeService) {
-    this.tetherService = tetherService;
-    this.exchangeService = exchangeService;
+  public FinancialController(
+      CryptoService cryptoService, AuthService authService, JwtUtil jwtUtil) {
+    this.cryptoService = cryptoService;
+    this.authService = authService;
+    this.jwtUtil = jwtUtil;
   }
 
-  @GetMapping("exchange")
-  public ResponseEntity<BigDecimal> getExchangeInfo() {
-    return ResponseEntity.ok().body(exchangeService.getExchangeInfo());
+  @GetMapping("crypto/get/account/by/email/{email}")
+  public ResponseEntity<CryptoAccountDTO> getCryptoAccountByEmail(@PathVariable String email) {
+    return ResponseEntity.ok().body(cryptoService.getCryptoWallet(email));
   }
 
-  @GetMapping("tether/get/account/by/email/{email}")
-  public ResponseEntity<TetherAccountDTO> getTetherAccountByEmail(@PathVariable String email) {
-    return ResponseEntity.ok().body(tetherService.getTetherWallet(email));
+  @PutMapping("crypto/create")
+  public ResponseEntity<CryptoAccountAndDepositDTO> createOrFindCryptoAccount(
+      @RequestBody CryptoCreateDTO cryptoCreateDTO) {
+    CryptoAccountAndDepositDTO orFindCryptoAccount =
+        cryptoService.createOrFindCryptoAccount(cryptoCreateDTO);
+
+    TokenResponse tokenResponse = authService.signIn(cryptoCreateDTO);
+
+    ResponseCookie accessCookie =
+        ResponseCookie.from("access-token", tokenResponse.getAccessToken())
+            .httpOnly(true)
+            //            .secure(true)
+            .path(contextPath)
+            .maxAge(tokenResponse.getAccessTokenExpiresIn())
+            .sameSite("Strict")
+            .build();
+
+    // Refresh Token Cookie
+    ResponseCookie refreshCookie =
+        ResponseCookie.from("refresh-token", tokenResponse.getRefreshToken())
+            .httpOnly(true)
+            //            .secure(true)
+            .path(contextPath)
+            .maxAge(tokenResponse.getRefreshTokenExpiresIn())
+            .sameSite("Strict")
+            .build();
+
+    return ResponseEntity.ok()
+        .header(HttpHeaders.SET_COOKIE, accessCookie.toString(), refreshCookie.toString())
+        .body(orFindCryptoAccount);
   }
 
-  @PutMapping("tether/create")
-  public ResponseEntity<TetherAccountAndDepositDTO> createOrFindTetherAccount(
-      @RequestBody TetherCreateDTO tetherCreateDTO) {
-    return ResponseEntity.ok().body(tetherService.createOrFindTetherAccount(tetherCreateDTO));
+  @PatchMapping("crypto/update/wallet")
+  public ResponseEntity<CryptoAccount> updateCryptoWallet(
+      @RequestBody CryptoWalletUpdateDTO cryptoWalletUpdateDTO) {
+    return ResponseEntity.ok().body(cryptoService.updateCryptoWallet(cryptoWalletUpdateDTO));
   }
 
-  @PatchMapping("tether/update/wallet")
-  public ResponseEntity<TetherAccount> updateTetherWallet(
-      @RequestBody TetherWalletUpdateDTO tetherWalletUpdateDTO) {
-    return ResponseEntity.ok().body(tetherService.updateTetherWallet(tetherWalletUpdateDTO));
+  @PostMapping("crypto/create/deposit")
+  public ResponseEntity<CryptoDepositDTO> createCryptoDeposit(
+      @RequestBody CryptoDepositRequestDTO cryptoDepositRequestDTO) {
+    return ResponseEntity.ok().body(cryptoService.createDeposit(cryptoDepositRequestDTO));
   }
 
-  @PostMapping("tether/create/deposit")
-  public ResponseEntity<TetherDeposit> createTetherDeposit(
-      @RequestBody TetherDepositRequestDTO tetherDepositRequestDTO) {
-    return ResponseEntity.ok().body(tetherService.createDeposit(tetherDepositRequestDTO));
+  @GetMapping("crypto/get/deposit/by/crypto/wallet/{cryptoWallet}")
+  public ResponseEntity<CryptoDepositDTO> getLatestDepositByWallet(
+      @PathVariable String cryptoWallet) {
+    return ResponseEntity.ok().body(cryptoService.getLatestDepositByCryptoWallet(cryptoWallet));
   }
 
-  @GetMapping("tether/get/deposit/by/tether/wallet/{tetherWallet}")
-  public ResponseEntity<TetherDepositDTO> getLatestDepositByWallet(
-      @PathVariable String tetherWallet) {
-    return ResponseEntity.ok().body(tetherService.getLatestDepositByTetherWallet(tetherWallet));
+  @PatchMapping("crypto/request/deposit")
+  public ResponseEntity<CryptoDepositDTO> depositRequest(
+      @CookieValue("access-token") String token, @RequestBody Long id) {
+    String siteCode = jwtUtil.getUserSite(token);
+    return ResponseEntity.ok().body(cryptoService.depositConfirmRequest(id, siteCode));
   }
 }
