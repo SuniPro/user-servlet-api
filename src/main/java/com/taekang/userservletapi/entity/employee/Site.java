@@ -49,12 +49,4 @@ public class Site extends BaseTimeEntity {
 
     @Column(name = "delete_date_time")
     private LocalDateTime deleteDateTime;
-
-    public Site linkedTelegram(Long chatId, String username) {
-        return this.toBuilder()
-                .telegramChatId(chatId)
-                .telegramUsername(username)
-                .telegramLinkToken(null) // 1회용 토큰 소모
-                .build();
-    }
 }

@@ -6,7 +6,6 @@ import jakarta.mail.internet.MimeMessage;
 import java.util.regex.Pattern;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.MailSendException;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
@@ -20,9 +19,6 @@ public class EmailAuthorizationService {
 
   private final MailSenderService mailSenderService;
 
-  @Value("${spring.mail.username}")
-  private String senderEmail;
-
   private static final Pattern EMAIL_PATTERN =
       Pattern.compile("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$");
 
@@ -34,10 +30,6 @@ public class EmailAuthorizationService {
     this.javaMailSender = javaMailSender;
     this.neverBounceService = neverBounceService;
     this.mailSenderService = mailSenderService;
-  }
-
-  public String generateAuthCode() {
-    return String.valueOf((int) ((Math.random() * 900000) + 100000)); // 6자리 인증번호
   }
 
   public void sendAuthMail(String to) throws FailedMessageSendException {

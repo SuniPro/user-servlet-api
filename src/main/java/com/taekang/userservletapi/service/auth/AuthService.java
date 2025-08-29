@@ -6,7 +6,6 @@ import com.taekang.userservletapi.DTO.crypto.CryptoCreateDTO;
 import com.taekang.userservletapi.error.IsNotRefreshTokenException;
 import com.taekang.userservletapi.error.TokenNotValidateException;
 import com.taekang.userservletapi.util.auth.JwtUtil;
-import io.jsonwebtoken.Claims;
 import java.time.Duration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -61,8 +60,6 @@ public class AuthService {
 
   /** Refresh 토큰 재발급 */
   public TokenResponse refresh(String oldRefreshToken) {
-    Claims claims = jwtUtil.parseClaims(oldRefreshToken);
-    String s = jwtUtil.parseClaims(oldRefreshToken).get("type", String.class);
     // 1) 토큰 타입 검증
     if (!"refresh-token".equals(jwtUtil.parseClaims(oldRefreshToken).get("type", String.class))) {
       throw new IsNotRefreshTokenException();

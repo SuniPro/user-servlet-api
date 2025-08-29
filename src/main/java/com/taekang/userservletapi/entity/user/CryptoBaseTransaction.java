@@ -43,7 +43,7 @@ public abstract class CryptoBaseTransaction {
   @Column(name = "accepted")
   private Boolean accepted;
 
-  @Column(name = "accepted_at", nullable = true)
+  @Column(name = "accepted_at")
   private LocalDateTime acceptedAt;
 
   @Column(name = "requested_at")
