@@ -1,4 +1,4 @@
-package com.taekang.userservletapi.DTO.tether;
+package com.taekang.userservletapi.DTO.crypto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,6 +9,6 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class TetherWalletUpdateDTO {
-  private String tetherWallet;
+public class CryptoWalletUpdateDTO {
+  private String cryptoWallet;
 }
