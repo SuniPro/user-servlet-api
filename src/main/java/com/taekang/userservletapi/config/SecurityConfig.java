@@ -5,81 +5,114 @@ import com.taekang.userservletapi.util.auth.CustomAccessDeniedHandler;
 import com.taekang.userservletapi.util.auth.CustomAuthenticationEntryPoint;
 import com.taekang.userservletapi.util.auth.JwtAuthFilter;
 import com.taekang.userservletapi.util.auth.JwtUtil;
-import lombok.AllArgsConstructor;
+import java.util.List;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.crypto.argon2.Argon2PasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.crypto.password.Pbkdf2PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 @Configuration
 @EnableWebSecurity
-@AllArgsConstructor
-@EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true)
+@EnableMethodSecurity(prePostEnabled = true, securedEnabled = true)
 public class SecurityConfig {
 
   private final CustomUserDetailsService customUserDetailsService;
   private final JwtUtil jwtUtil;
+  private final JwtAuthFilter jwtAuthFilter;
   private final CustomAccessDeniedHandler accessDeniedHandler;
   private final CustomAuthenticationEntryPoint authenticationEntryPoint;
 
-  // 인증 없이 접근 가능한 URL 목록
-  private static final String[] AUTH_WHITELIST = {"/tether/**"};
+  @Value("${jwt.auth.whitelist}")
+  private String[] authWhitelist;
+
+  public SecurityConfig(CustomUserDetailsService customUserDetailsService, JwtUtil jwtUtil,
+                        CustomAccessDeniedHandler accessDeniedHandler, CustomAuthenticationEntryPoint authenticationEntryPoint,
+                        JwtAuthFilter jwtAuthFilter) {
+    this.customUserDetailsService = customUserDetailsService;
+    this.jwtUtil = jwtUtil;
+    this.accessDeniedHandler = accessDeniedHandler;
+    this.authenticationEntryPoint = authenticationEntryPoint;
+    this.jwtAuthFilter = jwtAuthFilter;
+  }
 
   // CORS 허용경로
-  private static final String[] CORS_WHITELIST = {"/user/**", "/board", "/file/get", "/tether/**"};
+  private static final String[] CORS_WHITELIST = {"/auth/**", "/financial/**"};
 
   @Bean
   public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
     // CSRF & CORS 설정
-    http.csrf(AbstractHttpConfigurer::disable) // CSRF 보호 비활성화 (JWT 사용 시 일반적으로 비활성화)
-        .cors(Customizer.withDefaults()); // 기본 CORS 설정 적용
+    http.csrf(AbstractHttpConfigurer::disable).cors(Customizer.withDefaults());
 
     // 세션 관리 (STATELESS: 세션을 사용하지 않음)
     http.sessionManagement(
-        session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+            session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
     // 기본 로그인 방식(FormLogin, HttpBasic) 비활성화
     http.formLogin(AbstractHttpConfigurer::disable).httpBasic(AbstractHttpConfigurer::disable);
 
-    // JWT 인증 필터 추가 (UsernamePasswordAuthenticationFilter 앞에 배치)
-    http.addFilterBefore(
-        new JwtAuthFilter(customUserDetailsService, jwtUtil),
-        UsernamePasswordAuthenticationFilter.class);
-
-    // 예외 처리 핸들러 설정
+    // 예외 처리 핸들러
     http.exceptionHandling(
-        exceptionHandling ->
-            exceptionHandling
-                .authenticationEntryPoint(authenticationEntryPoint)
-                .accessDeniedHandler(accessDeniedHandler));
+            ex ->
+                    ex.authenticationEntryPoint(authenticationEntryPoint)
+                            .accessDeniedHandler(accessDeniedHandler));
 
-    http.authorizeHttpRequests(
-        auth -> auth.anyRequest().permitAll() // ✅ 다 열어버리기
-        );
-    //    // 요청 인증 및 권한 설정
-    //    http.authorizeHttpRequests(
-    //        auth ->
-    //            auth.requestMatchers(AUTH_WHITELIST)
-    //                .permitAll() // 인증 없이 접근 허용
-    //                .requestMatchers(CORS_WHITELIST)
-    //                .permitAll() // CORS 경로도 인증 없이 허용
-    //                .anyRequest()
-    //                .authenticated() // 그 외 요청은 인증 필요
-    //        );
+    // JWT 인증 필터 추가 (UsernamePasswordAuthenticationFilter 앞에 배치)
+    http.addFilterBefore(jwtAuthFilter, // 'new' 키워드로 직접 생성
+            UsernamePasswordAuthenticationFilter.class);
+
+    // ★ 인증/인가 규칙 — 단 한 번만 선언, anyRequest는 항상 마지막
+    http.authorizeHttpRequests(auth -> auth
+            .requestMatchers(authWhitelist).permitAll()
+            .requestMatchers(CORS_WHITELIST).permitAll()
+            // 필요 시 HttpMethod 별 매칭 예시:
+            // .requestMatchers(HttpMethod.GET, "/files/**").permitAll()
+            .anyRequest().authenticated()
+    );
 
     return http.build();
   }
 
   @Bean
   public PasswordEncoder passwordEncoder() {
-    return Argon2PasswordEncoder.defaultsForSpringSecurity_v5_8();
+    // 비밀키, iterationCount, hashWidth 설정
+    Pbkdf2PasswordEncoder encoder =
+            new Pbkdf2PasswordEncoder(
+                    "", 16, 10_000, Pbkdf2PasswordEncoder.SecretKeyFactoryAlgorithm.PBKDF2WithHmacSHA256);
+    // Hmac SHA-256 사용 (기본은 SHA1)
+    encoder.setAlgorithm(Pbkdf2PasswordEncoder.SecretKeyFactoryAlgorithm.PBKDF2WithHmacSHA256);
+    return encoder;
+  }
+
+  @Bean
+  public CorsConfigurationSource corsConfigurationSource() {
+    CorsConfiguration config = new CorsConfiguration();
+    // 허용할 프론트 도메인
+    config.setAllowedOrigins(
+            List.of("https://tie-ed.com", "https://icointext.com", "https://anycast.world", "http://localhost:5020", "http://192.168.3.159:5020"));
+
+    // 허용 HTTP 메서드
+    config.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
+
+    // 허용 헤더
+    config.setAllowedHeaders(List.of("*"));
+
+    // 자격증명(Cookie, Authorization 헤더) 허용
+    config.setAllowCredentials(true);
+
+    UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+    source.registerCorsConfiguration("/**", config);
+    return source;
   }
 }
