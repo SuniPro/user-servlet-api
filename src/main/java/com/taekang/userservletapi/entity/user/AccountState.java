@@ -1,4 +1,4 @@
-package com.taekang.userservletapi.entity;
+package com.taekang.userservletapi.entity.user;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
