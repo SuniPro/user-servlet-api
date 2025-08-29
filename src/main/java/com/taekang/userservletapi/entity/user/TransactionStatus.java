@@ -1,4 +1,4 @@
-package com.taekang.userservletapi.entity;
+package com.taekang.userservletapi.entity.user;
 
 public enum TransactionStatus {
   PENDING, // 요청
