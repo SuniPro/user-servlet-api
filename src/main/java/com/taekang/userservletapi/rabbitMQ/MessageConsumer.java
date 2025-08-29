@@ -1,7 +1,7 @@
 package com.taekang.userservletapi.rabbitMQ;
 
-import com.taekang.userservletapi.DTO.crypto.CryptoDepositDTO;
 import com.taekang.userservletapi.DTO.crypto.DepositSentApprovalNotifyDTO;
+import com.taekang.userservletapi.error.FailedMessageSendException;
 import com.taekang.userservletapi.service.MailSenderService;
 import jakarta.mail.internet.MimeMessage;
 import lombok.extern.slf4j.Slf4j;
@@ -30,6 +30,11 @@ public class MessageConsumer {
 
     MimeMessage mail = mailSenderService.createDepositApprovalMail(message.getEmail(), message);
 
+    try {
+
     javaMailSender.send(mail);
+    } catch (Exception e) {
+      throw new FailedMessageSendException();
+    }
   }
 }
