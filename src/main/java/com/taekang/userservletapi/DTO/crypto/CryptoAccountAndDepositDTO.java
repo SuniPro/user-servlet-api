@@ -1,4 +1,4 @@
-package com.taekang.userservletapi.DTO.tether;
+package com.taekang.userservletapi.DTO.crypto;
 
 import java.time.LocalDateTime;
 import lombok.*;
@@ -8,11 +8,11 @@ import lombok.*;
 @Builder(toBuilder = true)
 @NoArgsConstructor
 @AllArgsConstructor
-public class TetherAccountAndDepositDTO {
+public class CryptoAccountAndDepositDTO {
 
   private Long id;
 
-  private String tetherWallet;
+  private String cryptoWallet;
 
   private String email;
 
@@ -21,6 +21,8 @@ public class TetherAccountAndDepositDTO {
   private LocalDateTime acceptedAt;
 
   private LocalDateTime requestedAt;
+
+  private Boolean isSend;
 
   private LocalDateTime insertDateTime;
 
