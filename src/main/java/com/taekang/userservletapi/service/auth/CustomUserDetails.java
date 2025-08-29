@@ -1,22 +1,18 @@
 package com.taekang.userservletapi.service.auth;
 
-import com.taekang.userservletapi.DTO.user.CustomUserDTO;
-import java.util.ArrayList;
+import com.taekang.userservletapi.DTO.crypto.CryptoAccountDTO;
 import java.util.Collection;
 import java.util.List;
-import java.util.stream.Collectors;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-public record CustomUserDetails(CustomUserDTO customUserDTO) implements UserDetails {
+public record CustomUserDetails(CryptoAccountDTO cryptoAccountDTO) implements UserDetails {
 
   @Override
   public Collection<? extends GrantedAuthority> getAuthorities() {
-    List<String> roles = new ArrayList<>();
-    roles.add("ROLE_" + customUserDTO.getRoleType().toString());
-
-    return roles.stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList());
+    String site = cryptoAccountDTO.getSite(); // 예: "BINANCE"
+    return List.of(new SimpleGrantedAuthority("SITE_" + site));
   }
 
   @Override
@@ -31,21 +27,21 @@ public record CustomUserDetails(CustomUserDTO customUserDTO) implements UserDeta
 
   @Override
   public boolean isAccountNonExpired() {
-    return false;
+    return true;
   }
 
   @Override
   public boolean isAccountNonLocked() {
-    return false;
+    return true;
   }
 
   @Override
   public boolean isCredentialsNonExpired() {
-    return false;
+    return true;
   }
 
   @Override
   public boolean isEnabled() {
-    return false;
+    return true;
   }
 }
