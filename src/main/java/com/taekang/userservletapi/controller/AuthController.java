@@ -2,7 +2,7 @@ package com.taekang.userservletapi.controller;
 
 import com.taekang.userservletapi.DTO.TokenResponse;
 import com.taekang.userservletapi.DTO.crypto.CryptoCreateDTO;
-import com.taekang.userservletapi.DTO.user.UserAccountInfo;
+import com.taekang.userservletapi.DTO.user.UserAccountInfoDTO;
 import com.taekang.userservletapi.service.auth.AuthService;
 import com.taekang.userservletapi.util.auth.JwtUtil;
 import jakarta.validation.Valid;
@@ -30,12 +30,12 @@ public class AuthController {
   }
 
   @GetMapping("check")
-  public ResponseEntity<UserAccountInfo> check(@CookieValue("access-token") String token) {
+  public ResponseEntity<UserAccountInfoDTO> check(@CookieValue("access-token") String token) {
     String email = jwtUtil.getUserEmail(token);
     String wallet = jwtUtil.getUserCryptoWallet(token);
     String site = jwtUtil.getUserSite(token);
     String chainType = jwtUtil.getUserChainType(token);
-    return ResponseEntity.ok(new UserAccountInfo(email, wallet, site, chainType));
+    return ResponseEntity.ok(new UserAccountInfoDTO(email, wallet, site, chainType));
   }
 
   @PostMapping("login")
