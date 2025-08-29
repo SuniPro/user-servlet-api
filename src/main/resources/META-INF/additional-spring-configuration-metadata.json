@@ -9,5 +9,40 @@
       "name": "exchange.rate.class",
       "type": "java.lang.String",
       "description": "Description for exchange.rate.class."
+    },
+    {
+      "name": "jwt.refresh_token.expiration_time",
+      "type": "java.lang.String",
+      "description": "Description for jwt.refresh_token.expiration_time."
+    },
+    {
+      "name": "jwt.access_token.expiration_time",
+      "type": "java.lang.String",
+      "description": "Description for jwt.access_token.expiration_time."
+    },
+    {
+      "name": "api.node.crypto.tracker.uri",
+      "type": "java.lang.String",
+      "description": "Description for api.node.crypto.tracker.uri."
+    },
+    {
+      "name": "jwt.auth.whitelist",
+      "type": "java.lang.String",
+      "description": "Description for jwt.auth.whitelist."
+    },
+    {
+      "name": "rabbitmq.deposit.request.queue",
+      "type": "java.lang.String",
+      "description": "Description for rabbitmq.deposit.request.queue."
+    },
+    {
+      "name": "rabbitmq.deposit.approval.queue",
+      "type": "java.lang.String",
+      "description": "Description for rabbitmq.deposit.approval.queue."
+    },
+    {
+      "name": "rabbitmq.deposit.approval.routing",
+      "type": "java.lang.String",
+      "description": "Description for rabbitmq.deposit.approval.routing."
     }
   ] }
