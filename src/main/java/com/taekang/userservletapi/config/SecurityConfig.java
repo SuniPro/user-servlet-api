@@ -6,11 +6,11 @@ import com.taekang.userservletapi.util.auth.CustomAuthenticationEntryPoint;
 import com.taekang.userservletapi.util.auth.JwtAuthFilter;
 import com.taekang.userservletapi.util.auth.JwtUtil;
 import java.util.List;
-import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -25,20 +25,33 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 @Configuration
 @EnableWebSecurity
-@AllArgsConstructor
-@EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true)
+@EnableMethodSecurity(prePostEnabled = true, securedEnabled = true)
 public class SecurityConfig {
 
   private final CustomUserDetailsService customUserDetailsService;
   private final JwtUtil jwtUtil;
+  private final JwtAuthFilter jwtAuthFilter;
   private final CustomAccessDeniedHandler accessDeniedHandler;
   private final CustomAuthenticationEntryPoint authenticationEntryPoint;
 
-  // 인증 없이 접근 가능한 URL 목록
-  private static final String[] AUTH_WHITELIST = {"/financial/tether/**", "/financial/exchange"};
+  @Value("${jwt.auth.whitelist}")
+  private String[] authWhitelist;
+
+  public SecurityConfig(
+      CustomUserDetailsService customUserDetailsService,
+      JwtUtil jwtUtil,
+      CustomAccessDeniedHandler accessDeniedHandler,
+      CustomAuthenticationEntryPoint authenticationEntryPoint,
+      JwtAuthFilter jwtAuthFilter) {
+    this.customUserDetailsService = customUserDetailsService;
+    this.jwtUtil = jwtUtil;
+    this.accessDeniedHandler = accessDeniedHandler;
+    this.authenticationEntryPoint = authenticationEntryPoint;
+    this.jwtAuthFilter = jwtAuthFilter;
+  }
 
   // CORS 허용경로
-  private static final String[] CORS_WHITELIST = {"/user/**", "/board", "/file/get", "/tether/**"};
+  private static final String[] CORS_WHITELIST = {"/auth/**", "/financial/**"};
 
   @Bean
   public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -60,13 +73,13 @@ public class SecurityConfig {
 
     // JWT 인증 필터 추가 (UsernamePasswordAuthenticationFilter 앞에 배치)
     http.addFilterBefore(
-        new JwtAuthFilter(customUserDetailsService, jwtUtil),
+        jwtAuthFilter, // 'new' 키워드로 직접 생성
         UsernamePasswordAuthenticationFilter.class);
 
     // ★ 인증/인가 규칙 — 단 한 번만 선언, anyRequest는 항상 마지막
     http.authorizeHttpRequests(
         auth ->
-            auth.requestMatchers(AUTH_WHITELIST)
+            auth.requestMatchers(authWhitelist)
                 .permitAll()
                 .requestMatchers(CORS_WHITELIST)
                 .permitAll()
@@ -94,10 +107,15 @@ public class SecurityConfig {
     CorsConfiguration config = new CorsConfiguration();
     // 허용할 프론트 도메인
     config.setAllowedOrigins(
-        List.of("https://tie-ed.com", "https://icointext.com", "https://anycast.world"));
+        List.of(
+            "https://tie-ed.com",
+            "https://icointext.com",
+            "https://anycast.world",
+            "http://localhost:5020",
+            "http://192.168.3.159:5020"));
 
     // 허용 HTTP 메서드
-    config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+    config.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
 
     // 허용 헤더
     config.setAllowedHeaders(List.of("*"));

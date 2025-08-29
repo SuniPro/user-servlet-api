@@ -1,8 +1,10 @@
 package com.taekang.userservletapi.util.auth;
 
-import com.taekang.userservletapi.DTO.user.CustomUserDTO;
+import com.taekang.userservletapi.DTO.crypto.CryptoAccountDTO;
+import com.taekang.userservletapi.error.TokenNotValidateException;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
+import io.jsonwebtoken.security.SecurityException;
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.time.ZonedDateTime;
@@ -32,28 +34,34 @@ public class JwtUtil {
     this.refreshTokenExpTime = refreshTokenExpTime;
   }
 
-  /** Access Token 생성 */
-  public String createAccessToken(CustomUserDTO customUserDTO) {
-    return createToken(customUserDTO, accessTokenExpTime, "access_token");
+  /**
+   * Access Token 생성
+   *
+   * @param cryptoAccountDTO CryptoAccountDTO
+   * @return Access Token String
+   */
+  public String createAccessToken(CryptoAccountDTO cryptoAccountDTO) {
+    return createToken(cryptoAccountDTO, accessTokenExpTime, "access-token");
   }
 
   /** Refresh Token 생성 */
-  public String createRefreshToken(CustomUserDTO customUserDTO) {
-    return createToken(customUserDTO, refreshTokenExpTime, "refresh");
+  public String createRefreshToken(CryptoAccountDTO cryptoAccountDTO) {
+    return createToken(cryptoAccountDTO, refreshTokenExpTime, "refresh-token");
   }
 
   /**
    * JWT 생성
    *
-   * @param customUserDto : 로직 내부에서 인증정보를 저장해둘 dto 입니다.
+   * @param cryptoAccountDTO : 로직 내부에서 인증정보를 저장해둘 dto 입니다.
    * @param expireTime : 토큰의 만료시간입니다.
    * @return JWT String
    */
-  private String createToken(CustomUserDTO customUserDto, long expireTime, String type) {
+  private String createToken(CryptoAccountDTO cryptoAccountDTO, long expireTime, String type) {
     Claims claims = Jwts.claims();
-    claims.put("username", customUserDto.getUsername());
-    claims.put("email", customUserDto.getEmail());
-    claims.put("roleType", customUserDto.getRoleType());
+    claims.put("email", cryptoAccountDTO.getEmail());
+    claims.put("cryptoWallet", cryptoAccountDTO.getCryptoWallet());
+    claims.put("site", cryptoAccountDTO.getSite());
+    claims.put("chainType", cryptoAccountDTO.getChainType());
     claims.put("type", type); // 토큰 종류를 claim에 명시
 
     ZonedDateTime now = ZonedDateTime.now();
@@ -73,12 +81,20 @@ public class JwtUtil {
    * @param token : 발급된 토큰입니다.
    * @return User ID
    */
-  public String getUserEmail(String token) {
+  public String getUserEmail(String token) throws TokenNotValidateException {
     return parseClaims(token).get("email", String.class);
   }
 
-  public String getUsername(String token) {
-    return parseClaims(token).get("username", String.class);
+  public String getUserCryptoWallet(String token) throws TokenNotValidateException {
+    return parseClaims(token).get("cryptoWallet", String.class);
+  }
+
+  public String getUserSite(String token) throws TokenNotValidateException {
+    return parseClaims(token).get("site", String.class);
+  }
+
+  public String getUserChainType(String token) throws TokenNotValidateException {
+    return parseClaims(token).get("chainType", String.class);
   }
 
   /**
@@ -91,7 +107,7 @@ public class JwtUtil {
     try {
       Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
       return true;
-    } catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e) {
+    } catch (SecurityException | MalformedJwtException e) {
       log.info("Invalid JWT Token", e);
     } catch (ExpiredJwtException e) {
       log.info("Expired JWT Token", e);

@@ -29,6 +29,7 @@ public enum ErrorCode {
   IS_NOT_ACCESS_TOKEN("C400", "엑세스 토큰이 아닙니다.", HttpStatus.BAD_REQUEST),
 
   /* FINANCIAL ERROR OF TETHER */
+  IS_NOT_SUPPORT_WALLET_TYPE("S400", "지원하지 않는 지갑 형식입니다.", HttpStatus.BAD_REQUEST),
   CANNOT_FOUNDED_EXCHANGE_INFO("S500", "환율정보 수령을 실패했습니다.", HttpStatus.INTERNAL_SERVER_ERROR),
   ACCOUNT_NOT_FOUND("D404", "지갑정보를 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
   DUPLICATE_ACCOUNT("D409", "중복된 계좌입니다.", HttpStatus.CONFLICT),
@@ -39,7 +40,13 @@ public enum ErrorCode {
       "C400", "입금기록을 찾을 수 없거나, 이미 승인되었습니다.", HttpStatus.BAD_REQUEST),
   DUPLICATE_USERNAME_WITH_DIFFERENT_WALLET("S400", "잘못된 유저이름입니다.", HttpStatus.BAD_REQUEST),
   DEPOSIT_NOT_FOUND("D404", "입금 정보를 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
-  FAILED_MASSAGE_SEND("S500", "메일전송을 실패하였습니다.", HttpStatus.INTERNAL_SERVER_ERROR),
+  FAILED_MASSAGE_SEND("S500", "이메일 검증을 실패했습니다.", HttpStatus.INTERNAL_SERVER_ERROR),
+  NOT_EQUALS_DEPOSIT_AMOUNT("C500", "실제 보낸 금액과 입금 금액이 일치하지 않습니다.", HttpStatus.BAD_REQUEST),
+  TRANSFER_VALIDATION_FAIL("S500", "거래 내역 검증에 실패했습니다.", HttpStatus.INTERNAL_SERVER_ERROR),
+  CANNOT_FOUND_TRANSFER("S500", "거래 내역이 없습니다.", HttpStatus.BAD_REQUEST),
+
+  /* Site */
+  CANNOT_FOUND_SITE("S404", "사이트를 찾을 수 없습니다.", HttpStatus.INTERNAL_SERVER_ERROR),
 
   /* USER ERROR CODE */
   INVALID_EMAIL("C400", "잘못된 이메일입니다.", HttpStatus.BAD_REQUEST),

@@ -1,27 +1,43 @@
 package com.taekang.userservletapi.util.auth;
 
+import com.taekang.userservletapi.DTO.crypto.CryptoAccountDTO;
+import com.taekang.userservletapi.service.auth.CustomUserDetails;
 import com.taekang.userservletapi.service.auth.CustomUserDetailsService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import lombok.RequiredArgsConstructor;
+import java.util.Arrays;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
+import org.springframework.util.AntPathMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 @Slf4j
 @Component
-@RequiredArgsConstructor
 public class JwtAuthFilter extends OncePerRequestFilter {
 
   private final CustomUserDetailsService customUserDetailsService;
 
   private final JwtUtil jwtUtil;
+
+  private final String[] authWhitelist; // 1. Whitelist를 받을 필드 추가
+  private final AntPathMatcher pathMatcher = new AntPathMatcher();
+
+  public JwtAuthFilter(
+      CustomUserDetailsService customUserDetailsService,
+      JwtUtil jwtUtil,
+      @Value("${jwt.auth.whitelist}") String[] authWhitelist) {
+    this.customUserDetailsService = customUserDetailsService;
+    this.jwtUtil = jwtUtil;
+    this.authWhitelist = authWhitelist;
+  }
 
   /*
    * JWT 토큰 검증 필터 수행
@@ -30,35 +46,45 @@ public class JwtAuthFilter extends OncePerRequestFilter {
   protected void doFilterInternal(
       HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
       throws ServletException, IOException {
-    String authorizationHeader = request.getHeader("Authorization");
 
-    String uri = request.getRequestURI();
+    // 2. 현재 요청 경로가 Whitelist에 있는지 확인
+    String requestURI = request.getRequestURI();
+    boolean isWhitelisted =
+        Arrays.stream(authWhitelist).anyMatch(pattern -> pathMatcher.match(pattern, requestURI));
 
-    // ✅ financial 경로는 완전 스킵!
-    if (uri.startsWith("/financial")) {
-      log.info("Non Authorization Path: {}", uri);
+    // 3. Whitelist에 있다면, 토큰 검사를 생략하고 다음 필터로 바로 이동
+    if (isWhitelisted) {
       filterChain.doFilter(request, response);
       return;
     }
 
-    // JWT가 헤더에 있는 경우
-    if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
-      String token = authorizationHeader.substring(7);
-      // JWT 유효성 검증
+    String token = null;
+    // 1. 요청의 쿠키들을 가져옵니다.
+    Cookie[] cookies = request.getCookies();
+    if (cookies != null) {
+      // 2. 'accessToken'이라는 이름의 쿠키를 찾습니다. (이름은 서버에서 설정한 것과 동일해야 함)
+      for (Cookie cookie : cookies) {
+        if ("accessToken".equals(cookie.getName())) {
+          token = cookie.getValue();
+          break;
+        }
+      }
+    }
+
+    if (token != null) {
       if (jwtUtil.validateToken(token)) {
-        String username = jwtUtil.getUsername(token);
+        String email = jwtUtil.getUserEmail(token);
 
-        // 유저와 토큰 일치 시 userDetails 생성
-        UserDetails userDetails = customUserDetailsService.loadUserByUsername(username);
+        CryptoAccountDTO cryptoAccountDTO = customUserDetailsService.loadUserByEmail(email);
 
-        if (userDetails != null) {
-          // UserDetsils, Password, Role -> 접근권한 인증 Token 생성
-          UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
+        if (cryptoAccountDTO != null) {
+          UserDetails userDetails = new CustomUserDetails(cryptoAccountDTO);
+
+          UsernamePasswordAuthenticationToken authentication =
               new UsernamePasswordAuthenticationToken(
                   userDetails, null, userDetails.getAuthorities());
 
-          // 현재 Request의 Security Context에 접근권한 설정
-          SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
+          SecurityContextHolder.getContext().setAuthentication(authentication);
         }
       }
     }
