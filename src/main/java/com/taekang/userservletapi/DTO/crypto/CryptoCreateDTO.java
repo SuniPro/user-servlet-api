@@ -1,4 +1,4 @@
-package com.taekang.userservletapi.DTO.tether;
+package com.taekang.userservletapi.DTO.crypto;
 
 import lombok.*;
 
@@ -7,11 +7,11 @@ import lombok.*;
 @Builder(toBuilder = true)
 @NoArgsConstructor
 @AllArgsConstructor
-public class TetherCreateDTO {
+public class CryptoCreateDTO {
 
   private String email;
 
-  private String tetherWallet;
+  private String cryptoWallet;
 
   private String site;
 }
