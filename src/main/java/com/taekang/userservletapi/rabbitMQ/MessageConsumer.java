@@ -1,12 +1,14 @@
 package com.taekang.userservletapi.rabbitMQ;
 
 import com.taekang.userservletapi.DTO.crypto.CryptoDepositDTO;
+import com.taekang.userservletapi.DTO.crypto.DepositSentApprovalNotifyDTO;
 import com.taekang.userservletapi.service.MailSenderService;
 import jakarta.mail.internet.MimeMessage;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.stereotype.Component;
 
 @Slf4j
@@ -23,7 +25,7 @@ public class MessageConsumer {
   }
 
   @RabbitListener(queues = "${rabbitmq.deposit.approval.queue}")
-  public void receiveDepositMessage(CryptoDepositDTO message) {
+  public void receiveDepositMessage(DepositSentApprovalNotifyDTO message, @Header("site") String siteCode) {
     log.info("Received deposit message: {}", message.toString());
 
     MimeMessage mail = mailSenderService.createDepositApprovalMail(message.getEmail(), message);
