@@ -118,30 +118,29 @@ public class GlobalExceptionHandler {
 
   @ExceptionHandler(NotEqualsDepositAmountException.class)
   public ResponseEntity<ErrorResponse> handleNotEqualsDepositAmountException(
-          NotEqualsDepositAmountException e) {
+      NotEqualsDepositAmountException e) {
     return ResponseEntity.status(e.getErrorCode().getHttpStatus())
-            .body(new ErrorResponse(e.getErrorCode()));
+        .body(new ErrorResponse(e.getErrorCode()));
   }
 
   @ExceptionHandler(TransferValidationFailException.class)
   public ResponseEntity<ErrorResponse> handleTransferValidationFail(
-          TransferValidationFailException e) {
+      TransferValidationFailException e) {
     return ResponseEntity.status(e.getErrorCode().getHttpStatus())
-            .body(new ErrorResponse(e.getErrorCode()));
+        .body(new ErrorResponse(e.getErrorCode()));
   }
 
   @ExceptionHandler(CannotFoundTransferException.class)
   public ResponseEntity<ErrorResponse> handleCannotFoundTransferException(
-          CannotFoundTransferException e) {
+      CannotFoundTransferException e) {
     return ResponseEntity.status(e.getErrorCode().getHttpStatus())
-            .body(new ErrorResponse(e.getErrorCode()));
+        .body(new ErrorResponse(e.getErrorCode()));
   }
 
   @ExceptionHandler(CannotFoundSiteException.class)
-  public ResponseEntity<ErrorResponse> handleCannotFoundSiteException(
-          CannotFoundSiteException e) {
+  public ResponseEntity<ErrorResponse> handleCannotFoundSiteException(CannotFoundSiteException e) {
     return ResponseEntity.status(e.getErrorCode().getHttpStatus())
-            .body(new ErrorResponse(e.getErrorCode()));
+        .body(new ErrorResponse(e.getErrorCode()));
   }
 
   //  // 다른 커스텀 예외들도 이렇게 추가하면 됨

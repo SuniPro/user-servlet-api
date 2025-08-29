@@ -26,9 +26,9 @@ public class JwtUtil {
   @Getter private final long refreshTokenExpTime;
 
   public JwtUtil(
-          @Value("${jwt.secret}") String secretKey,
-          @Value("${jwt.access_token.expiration_time}") long accessTokenExpTime,
-          @Value("${jwt.refresh_token.expiration_time}") long refreshTokenExpTime) {
+      @Value("${jwt.secret}") String secretKey,
+      @Value("${jwt.access_token.expiration_time}") long accessTokenExpTime,
+      @Value("${jwt.refresh_token.expiration_time}") long refreshTokenExpTime) {
     this.key = Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8));
     this.accessTokenExpTime = accessTokenExpTime;
     this.refreshTokenExpTime = refreshTokenExpTime;
@@ -36,6 +36,7 @@ public class JwtUtil {
 
   /**
    * Access Token 생성
+   *
    * @param cryptoAccountDTO CryptoAccountDTO
    * @return Access Token String
    */
@@ -67,11 +68,11 @@ public class JwtUtil {
     ZonedDateTime validUntil = now.plusSeconds(expireTime);
 
     return Jwts.builder()
-            .setClaims(claims)
-            .setIssuedAt(Date.from(now.toInstant()))
-            .setExpiration(Date.from(validUntil.toInstant()))
-            .signWith(key, SignatureAlgorithm.HS256)
-            .compact();
+        .setClaims(claims)
+        .setIssuedAt(Date.from(now.toInstant()))
+        .setExpiration(Date.from(validUntil.toInstant()))
+        .signWith(key, SignatureAlgorithm.HS256)
+        .compact();
   }
 
   /**

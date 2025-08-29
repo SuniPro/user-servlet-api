@@ -1,10 +1,9 @@
 package com.taekang.userservletapi.DTO.crypto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import lombok.*;
-
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import lombok.*;
 
 @Getter
 @Setter
@@ -14,16 +13,15 @@ import java.time.LocalDateTime;
 @ToString
 public class DepositNotifyDTO {
 
-    private String email;
+  private String email;
 
-    private String fromAddress;
+  private String fromAddress;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING)
-    private BigDecimal amount;
+  @JsonFormat(shape = JsonFormat.Shape.STRING)
+  private BigDecimal amount;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING)
-    private BigDecimal krwAmount;
+  @JsonFormat(shape = JsonFormat.Shape.STRING)
+  private BigDecimal krwAmount;
 
-    private LocalDateTime requestedAt;
+  private LocalDateTime requestedAt;
 }
-

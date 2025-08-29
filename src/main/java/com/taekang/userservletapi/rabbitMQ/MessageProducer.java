@@ -13,23 +13,22 @@ import org.springframework.stereotype.Service;
 @Service
 public class MessageProducer {
 
-    @Value("${rabbitmq.transaction.exchange}")
-    private String transactionExchangeName;
+  @Value("${rabbitmq.transaction.exchange}")
+  private String transactionExchangeName;
 
-    @Value("${rabbitmq.deposit.request.routing}")
-    private String depositRequestRoutingKey;
+  @Value("${rabbitmq.deposit.request.routing}")
+  private String depositRequestRoutingKey;
 
-    private final RabbitTemplate rabbitTemplate;
+  private final RabbitTemplate rabbitTemplate;
 
-    @Autowired
-    public MessageProducer(RabbitTemplate rabbitTemplate) {
-        this.rabbitTemplate = rabbitTemplate;
-    }
+  @Autowired
+  public MessageProducer(RabbitTemplate rabbitTemplate) {
+    this.rabbitTemplate = rabbitTemplate;
+  }
 
-    public void sendDepositMessage(DepositNotifyDTO message, String siteCode) {
-        Message<DepositNotifyDTO> msg = MessageBuilder.withPayload(message)
-                .setHeader("site", siteCode)
-                .build();
-        rabbitTemplate.convertAndSend(transactionExchangeName, depositRequestRoutingKey, msg);
-    }
+  public void sendDepositMessage(DepositNotifyDTO message, String siteCode) {
+    Message<DepositNotifyDTO> msg =
+        MessageBuilder.withPayload(message).setHeader("site", siteCode).build();
+    rabbitTemplate.convertAndSend(transactionExchangeName, depositRequestRoutingKey, msg);
+  }
 }

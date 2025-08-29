@@ -30,8 +30,9 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
       log.debug("exception: {}", exception);
 
       switch (exception) {
-        case "SignatureVerificationException", "AlgorithmMismatchException", "JWTDecodeException" ->
-            errorCode = ErrorCode.TOKEN_NOT_VALIDATE;
+        case "SignatureVerificationException",
+            "AlgorithmMismatchException",
+            "JWTDecodeException" -> errorCode = ErrorCode.TOKEN_NOT_VALIDATE;
         case "TokenExpiredException" -> errorCode = ErrorCode.TOKEN_EXPIRE;
         default -> errorCode = ErrorCode.CANNOT_FIND_TOKEN;
       }

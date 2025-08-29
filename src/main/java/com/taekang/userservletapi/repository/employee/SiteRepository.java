@@ -6,8 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface SiteRepository extends JpaRepository<Site, Integer> {
 
-    Optional<Site> findBySite(String site);
-    
-    String site(String site);
-}
+  Optional<Site> findBySite(String site);
 
+  String site(String site);
+}

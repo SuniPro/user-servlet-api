@@ -19,40 +19,39 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @Configuration
 @EnableTransactionManagement
 @EnableJpaRepositories(
-        basePackages = "com.taekang.userservletapi.repository.employee",
-        entityManagerFactoryRef = "employeeEntityManagerFactory",
-        transactionManagerRef = "employeeTransactionManager")
+    basePackages = "com.taekang.userservletapi.repository.employee",
+    entityManagerFactoryRef = "employeeEntityManagerFactory",
+    transactionManagerRef = "employeeTransactionManager")
 public class EmployeeDataSourceConfig {
 
-    @Bean
-    @ConfigurationProperties(prefix = "spring.datasource.employee")
-    public DataSourceProperties employeeDataSourceProperties() {
-        return new DataSourceProperties();
-    }
+  @Bean
+  @ConfigurationProperties(prefix = "spring.datasource.employee")
+  public DataSourceProperties employeeDataSourceProperties() {
+    return new DataSourceProperties();
+  }
 
-    @Bean
-    public DataSource employeeDataSource() {
-        return employeeDataSourceProperties().initializeDataSourceBuilder().build();
-    }
+  @Bean
+  public DataSource employeeDataSource() {
+    return employeeDataSourceProperties().initializeDataSourceBuilder().build();
+  }
 
-    @Bean
-    public LocalContainerEntityManagerFactoryBean employeeEntityManagerFactory(
-            EntityManagerFactoryBuilder builder,
-            @Qualifier("employeeDataSource") DataSource dataSource,
-            @Qualifier("jpaVendorProperties") Map<String, Object> jpaProps) {
-        return builder
-                .dataSource(dataSource)
-                .packages("com.taekang.userservletapi.entity.employee")
-                .persistenceUnit("employee")
-                .properties(jpaProps)
-                .build();
-    }
+  @Bean
+  public LocalContainerEntityManagerFactoryBean employeeEntityManagerFactory(
+      EntityManagerFactoryBuilder builder,
+      @Qualifier("employeeDataSource") DataSource dataSource,
+      @Qualifier("jpaVendorProperties") Map<String, Object> jpaProps) {
+    return builder
+        .dataSource(dataSource)
+        .packages("com.taekang.userservletapi.entity.employee")
+        .persistenceUnit("employee")
+        .properties(jpaProps)
+        .build();
+  }
 
-    @Bean
-    @Primary
-    public PlatformTransactionManager employeeTransactionManager(
-            @Qualifier("employeeEntityManagerFactory") EntityManagerFactory emf) {
-        return new JpaTransactionManager(emf);
-    }
+  @Bean
+  @Primary
+  public PlatformTransactionManager employeeTransactionManager(
+      @Qualifier("employeeEntityManagerFactory") EntityManagerFactory emf) {
+    return new JpaTransactionManager(emf);
+  }
 }
-

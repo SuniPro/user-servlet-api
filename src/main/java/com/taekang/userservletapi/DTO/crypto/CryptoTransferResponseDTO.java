@@ -13,23 +13,23 @@ import lombok.*;
 @ToString
 public class CryptoTransferResponseDTO {
 
-    private ChainType chainType;
+  private ChainType chainType;
 
-    private CryptoType cryptoType;
+  private CryptoType cryptoType;
 
-    private String fromAddress;
+  private String fromAddress;
 
-    private String toAddress;
+  private String toAddress;
 
-    private String cryptoAmount;
+  private String cryptoAmount;
 
-    private int decimals;
+  private int decimals;
 
-    private TransactionStatus status;
+  private TransactionStatus status;
 
-    private Boolean accepted;
+  private Boolean accepted;
 
-    private Long acceptedAt;
-    
-    private String memo;
+  private Long acceptedAt;
+
+  private String memo;
 }

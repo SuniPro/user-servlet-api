@@ -46,18 +46,19 @@ public class CryptoServiceImpl implements CryptoService {
 
   @Autowired
   public CryptoServiceImpl(
-          CryptoAccountRepository cryptoAccountRepository,
-          CryptoDepositRepository cryptoDepositRepository,
-          EmailAuthorizationService emailAuthorizationService, SiteRepository siteRepository,
-          CryptoTransferValidation cryptoTransferValidation,
-          MessageProducer messageProducer,
-          CryptoValidationService cryptoValidationService,
-          ModelMapper modelMapper) {
+      CryptoAccountRepository cryptoAccountRepository,
+      CryptoDepositRepository cryptoDepositRepository,
+      EmailAuthorizationService emailAuthorizationService,
+      SiteRepository siteRepository,
+      CryptoTransferValidation cryptoTransferValidation,
+      MessageProducer messageProducer,
+      CryptoValidationService cryptoValidationService,
+      ModelMapper modelMapper) {
     this.cryptoAccountRepository = cryptoAccountRepository;
     this.cryptoDepositRepository = cryptoDepositRepository;
     this.emailAuthorizationService = emailAuthorizationService;
-      this.siteRepository = siteRepository;
-      this.cryptoTransferValidation = cryptoTransferValidation;
+    this.siteRepository = siteRepository;
+    this.cryptoTransferValidation = cryptoTransferValidation;
     this.messageProducer = messageProducer;
     this.cryptoValidationService = cryptoValidationService;
     this.modelMapper = modelMapper;
@@ -110,11 +111,11 @@ public class CryptoServiceImpl implements CryptoService {
       throw new WalletVerification(); // 중복 but 일치하지 않음
     } else {
 
-            try {
-              emailAuthorizationService.sendAuthMail(dto.getEmail());
-            } catch (Exception e) {
-              throw new FailedMessageSendException();
-            }
+      try {
+        emailAuthorizationService.sendAuthMail(dto.getEmail());
+      } catch (Exception e) {
+        throw new FailedMessageSendException();
+      }
 
       // 신규 등록
       account =
@@ -260,9 +261,11 @@ public class CryptoServiceImpl implements CryptoService {
 
     CryptoDepositDTO result = toCryptoDepositDTO(save);
 
-    Site siteEntity = siteRepository.findBySite(siteCode).orElseThrow(CannotFoundSiteException::new);
+    Site siteEntity =
+        siteRepository.findBySite(siteCode).orElseThrow(CannotFoundSiteException::new);
 
-    DepositNotifyDTO depositNotifyDTO = DepositNotifyDTO.builder()
+    DepositNotifyDTO depositNotifyDTO =
+        DepositNotifyDTO.builder()
             .email(result.getEmail())
             .fromAddress(result.getFromAddress())
             .amount(result.getAmount())

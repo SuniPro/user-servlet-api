@@ -19,7 +19,8 @@ public class CustomUserDetailsService {
   private final ModelMapper mapper;
 
   @Autowired
-  public CustomUserDetailsService(CryptoAccountRepository cryptoAccountRepository, ModelMapper mapper) {
+  public CustomUserDetailsService(
+      CryptoAccountRepository cryptoAccountRepository, ModelMapper mapper) {
     this.cryptoAccountRepository = cryptoAccountRepository;
     this.mapper = mapper;
   }
@@ -27,10 +28,9 @@ public class CustomUserDetailsService {
   public CryptoAccountDTO loadUserByEmail(String email) throws AccountNotFoundException {
     CryptoAccount user =
         cryptoAccountRepository
-                .findByEmail(email)
+            .findByEmail(email)
             .orElseThrow(() -> new UsernameNotFoundException("해당하는 유저가 없습니다."));
-    
+
     return mapper.map(user, CryptoAccountDTO.class);
   }
-
 }

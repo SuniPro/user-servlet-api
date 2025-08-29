@@ -42,8 +42,8 @@ public enum ErrorCode {
   DEPOSIT_NOT_FOUND("D404", "입금 정보를 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
   FAILED_MASSAGE_SEND("S500", "이메일 검증을 실패했습니다.", HttpStatus.INTERNAL_SERVER_ERROR),
   NOT_EQUALS_DEPOSIT_AMOUNT("C500", "실제 보낸 금액과 입금 금액이 일치하지 않습니다.", HttpStatus.BAD_REQUEST),
-  TRANSFER_VALIDATION_FAIL("S500", "거래 내역 검증에 실패했습니다.",HttpStatus.INTERNAL_SERVER_ERROR),
-  CANNOT_FOUND_TRANSFER("S500", "거래 내역이 없습니다.",HttpStatus.BAD_REQUEST),
+  TRANSFER_VALIDATION_FAIL("S500", "거래 내역 검증에 실패했습니다.", HttpStatus.INTERNAL_SERVER_ERROR),
+  CANNOT_FOUND_TRANSFER("S500", "거래 내역이 없습니다.", HttpStatus.BAD_REQUEST),
 
   /* Site */
   CANNOT_FOUND_SITE("S404", "사이트를 찾을 수 없습니다.", HttpStatus.INTERNAL_SERVER_ERROR),

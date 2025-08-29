@@ -13,21 +13,21 @@ import org.springframework.stereotype.Component;
 @Component
 public class MessageConsumer {
 
-    private final MailSenderService mailSenderService;
-    private final JavaMailSender javaMailSender;
+  private final MailSenderService mailSenderService;
+  private final JavaMailSender javaMailSender;
 
-    @Autowired
-    public MessageConsumer(MailSenderService mailSenderService, JavaMailSender javaMailSender) {
-        this.mailSenderService = mailSenderService;
-        this.javaMailSender = javaMailSender;
-    }
+  @Autowired
+  public MessageConsumer(MailSenderService mailSenderService, JavaMailSender javaMailSender) {
+    this.mailSenderService = mailSenderService;
+    this.javaMailSender = javaMailSender;
+  }
 
-    @RabbitListener(queues = "${rabbitmq.deposit.approval.queue}")
-    public void receiveDepositMessage(CryptoDepositDTO message) {
-        log.info("Received deposit message: {}", message.toString());
+  @RabbitListener(queues = "${rabbitmq.deposit.approval.queue}")
+  public void receiveDepositMessage(CryptoDepositDTO message) {
+    log.info("Received deposit message: {}", message.toString());
 
-        MimeMessage mail = mailSenderService.createDepositApprovalMail(message.getEmail(), message);
+    MimeMessage mail = mailSenderService.createDepositApprovalMail(message.getEmail(), message);
 
-        javaMailSender.send(mail);
-    }
+    javaMailSender.send(mail);
+  }
 }
