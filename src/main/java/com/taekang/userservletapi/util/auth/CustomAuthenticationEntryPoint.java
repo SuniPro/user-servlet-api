@@ -24,14 +24,15 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
     ErrorCode errorCode;
 
     if (exceptionAttr == null) {
-      errorCode = ErrorCode.CANNOT_FIND_TOKEN;
+      errorCode = ErrorCode.INTERNAL_SERVER_ERROR;
     } else {
       String exception = exceptionAttr.toString();
       log.debug("exception: {}", exception);
 
       switch (exception) {
+        case "SignatureVerificationException", "AlgorithmMismatchException", "JWTDecodeException" ->
+            errorCode = ErrorCode.TOKEN_NOT_VALIDATE;
         case "TokenExpiredException" -> errorCode = ErrorCode.TOKEN_EXPIRE;
-        case "JWTVerificationException" -> errorCode = ErrorCode.TOKEN_ABNORMALITY;
         default -> errorCode = ErrorCode.CANNOT_FIND_TOKEN;
       }
     }
