@@ -20,6 +20,9 @@ public class AuthController {
   @Value("${server.servlet.context-path}")
   private String contextPath;
 
+  @Value("${icoin.domain}")
+  private String icoinDomain;
+
   private final AuthService authService;
   private final JwtUtil jwtUtil;
 
@@ -47,6 +50,7 @@ public class AuthController {
         ResponseCookie.from("access-token", tokenResponse.getAccessToken())
             .httpOnly(true)
             .secure(true)
+            .domain(icoinDomain)
             .path(contextPath)
             .maxAge(tokenResponse.getAccessTokenExpiresIn())
             .sameSite("Strict")
@@ -57,6 +61,7 @@ public class AuthController {
         ResponseCookie.from("refresh-token", tokenResponse.getRefreshToken())
             .httpOnly(true)
             .secure(true)
+            .domain(icoinDomain)
             .path(contextPath)
             .maxAge(tokenResponse.getRefreshTokenExpiresIn())
             .sameSite("Strict")
@@ -76,6 +81,7 @@ public class AuthController {
         ResponseCookie.from("access-token", tokens.getAccessToken())
             .httpOnly(true)
             .secure(true)
+            .domain(icoinDomain)
             .path("/")
             .maxAge(tokens.getAccessTokenExpiresIn())
             .sameSite("Strict")
@@ -86,6 +92,7 @@ public class AuthController {
         ResponseCookie.from("refresh-token", tokens.getRefreshToken())
             .httpOnly(true)
             .secure(true)
+            .domain(icoinDomain)
             .path("/")
             .maxAge(tokens.getRefreshTokenExpiresIn())
             .sameSite("Strict")
