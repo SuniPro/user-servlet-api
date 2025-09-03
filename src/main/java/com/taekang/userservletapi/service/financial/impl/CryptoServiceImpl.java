@@ -31,7 +31,7 @@ public class CryptoServiceImpl implements CryptoService {
   private final CryptoDepositRepository cryptoDepositRepository;
 
   private final EmailAuthorizationService emailAuthorizationService;
-  
+
   private final CryptoTransferValidation cryptoTransferValidation;
 
   private final MessageProducer messageProducer;

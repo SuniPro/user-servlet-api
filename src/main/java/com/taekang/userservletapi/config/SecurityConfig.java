@@ -110,10 +110,7 @@ public class SecurityConfig {
     CorsConfiguration config = new CorsConfiguration();
     // 허용할 프론트 도메인
     config.setAllowedOrigins(
-        List.of(
-            "https://tie-ed.com",
-            "https://icointext.com",
-            "https://" + icoinDomain));
+        List.of("https://tie-ed.com", "https://icointext.com", "https://" + icoinDomain));
 
     // 허용 HTTP 메서드
     config.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));

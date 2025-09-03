@@ -17,5 +17,5 @@ public interface CryptoService {
 
   CryptoDepositDTO getLatestDepositByCryptoWallet(String cryptoWallet);
 
-  CryptoDepositDTO depositConfirmRequest(Long id,String cryptoWallet, String siteCode);
+  CryptoDepositDTO depositConfirmRequest(Long id, String cryptoWallet, String siteCode);
 }

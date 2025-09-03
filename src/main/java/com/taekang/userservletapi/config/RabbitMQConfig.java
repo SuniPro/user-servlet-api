@@ -30,8 +30,6 @@ public class RabbitMQConfig {
   @Value("${rabbitmq.deposit.approval.routing}")
   private String depositApprovalRoutingKey;
 
-
-
   @Bean
   public TopicExchange exchange() {
     return new TopicExchange(transactionExchangeName);
@@ -73,7 +71,7 @@ public class RabbitMQConfig {
   // 3) @RabbitListener 컨테이너 팩토리에 같은 컨버터 사용 (+ 재큐 금지 권장)
   @Bean(name = "rabbitListenerContainerFactory")
   public SimpleRabbitListenerContainerFactory rabbitListenerContainerFactory(
-          ConnectionFactory cf, MessageConverter converter) {
+      ConnectionFactory cf, MessageConverter converter) {
     SimpleRabbitListenerContainerFactory f = new SimpleRabbitListenerContainerFactory();
     f.setConnectionFactory(cf);
     f.setMessageConverter(converter);
