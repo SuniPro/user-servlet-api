@@ -30,8 +30,7 @@ public class MessageConsumer {
     MimeMessage mail = mailSenderService.createDepositApprovalMail(message.getEmail(), message);
 
     try {
-
-    javaMailSender.send(mail);
+      javaMailSender.send(mail);
     } catch (Exception e) {
       throw new FailedMessageSendException();
     }

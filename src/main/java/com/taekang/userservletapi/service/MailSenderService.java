@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
+import java.time.format.DateTimeFormatter;
+
 @Slf4j
 @Service
 public class MailSenderService {
@@ -51,10 +53,12 @@ public class MailSenderService {
     }
   }
 
-  public MimeMessage createDepositApprovalMail(String mail, DepositSentApprovalNotifyDTO cryptoDeposit) {
+  public MimeMessage createDepositApprovalMail(String mail, DepositSentApprovalNotifyDTO depositSentApprovalNotifyDTO) {
     MimeMessage mimeMessage = javaMailSender.createMimeMessage();
 
     log.info("{} 을 통해 메일을 발송함.", senderEmail);
+
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
     try {
       mimeMessage.setFrom(senderEmail);
@@ -68,8 +72,8 @@ public class MailSenderService {
               + "<h2 style=\"color: #333333;\"><span style=\"color: #037AED;\">i coins</span> 입금 승인 안내</h2>"
               + "<p style=\"font-size: 16px; color: #555555;\">안녕하세요.</p>"
               + "<p style=\"font-size: 16px; color: #555555;\">"
-              + cryptoDeposit.getRequestAt() + "에 요청하신 <strong>"
-              + cryptoDeposit.getAmount() + " " + cryptoDeposit.getCryptoType()
+              + depositSentApprovalNotifyDTO.getRequestAt().format(formatter) + "에 요청하신 <strong>"
+              + depositSentApprovalNotifyDTO.getAmount() + " " + depositSentApprovalNotifyDTO.getCryptoType()
               + "</strong> 입금이 정상적으로 승인되었습니다."
               + "</p>"
               + "<p style=\"font-size: 16px; color: #555555;\">"
