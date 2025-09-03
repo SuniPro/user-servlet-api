@@ -3,7 +3,6 @@ package com.taekang.userservletapi.service.financial.impl;
 import com.taekang.userservletapi.DTO.crypto.*;
 import com.taekang.userservletapi.api.CryptoTransferValidation;
 import com.taekang.userservletapi.api.CryptoValidationService;
-import com.taekang.userservletapi.entity.employee.Site;
 import com.taekang.userservletapi.entity.user.*;
 import com.taekang.userservletapi.error.*;
 import com.taekang.userservletapi.rabbitMQ.MessageProducer;
@@ -17,7 +16,6 @@ import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.time.ZonedDateTime;
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -197,6 +195,14 @@ public class CryptoServiceImpl implements CryptoService {
     return modelMapper.map(cryptoDepositRepository.save(cryptoDeposit), CryptoDepositDTO.class);
   }
 
+  @Override
+  @Transactional(readOnly = true)
+  public CryptoDepositDTO getDepositById(Long id) {
+    CryptoDeposit cryptoDeposit =
+        cryptoDepositRepository.findById(id).orElseThrow(DepositNotFoundException::new);
+    return modelMapper.map(cryptoDeposit, CryptoDepositDTO.class);
+  }
+
   /** 특정 지갑의 마지막 입금 내역을 조회합니다. */
   @Override
   @Transactional(readOnly = true)
@@ -211,27 +217,29 @@ public class CryptoServiceImpl implements CryptoService {
 
   @Override
   @Transactional
-  public CryptoDepositDTO depositConfirmRequest(Long id, String siteCode) {
+  public CryptoDepositDTO depositConfirmRequest(Long id, String cryptoWallet, String siteCode) {
 
+    CryptoAccount cryptoAccount =
+        cryptoAccountRepository
+            .findByCryptoWallet(cryptoWallet)
+            .orElseThrow(AccountNotFoundException::new);
     CryptoDeposit cryptoDeposit =
         cryptoDepositRepository.findById(id).orElseThrow(DepositNotFoundException::new);
 
     CryptoTransferResponseDTO cryptoTransferResponseDTO;
 
-    ZonedDateTime utc = cryptoDeposit.getRequestedAt().atZone(ZoneId.of("UTC"));
+    LocalDateTime ldt = cryptoDeposit.getRequestedAt();
+    ZoneId origin = ZoneId.of("Asia/Seoul");
+    long requestedAt = ldt.atZone(origin).toInstant().toEpochMilli();
 
     if (cryptoDeposit.getChainType().equals(ChainType.TRON)) {
       cryptoTransferResponseDTO =
           cryptoTransferValidation.TronTransferValidation(
-              cryptoDeposit.getFromAddress(),
-              cryptoDeposit.getToAddress(),
-              utc.toInstant().toEpochMilli());
+              cryptoDeposit.getFromAddress(), cryptoDeposit.getToAddress(), requestedAt);
     } else {
       cryptoTransferResponseDTO =
           cryptoTransferValidation.EthTransferValidation(
-              cryptoDeposit.getFromAddress(),
-              cryptoDeposit.getToAddress(),
-              utc.toInstant().toEpochMilli());
+              cryptoDeposit.getFromAddress(), cryptoDeposit.getToAddress(), requestedAt);
     }
 
     log.info("[TronWalletValidation] Response: {}", cryptoTransferResponseDTO.toString());
@@ -255,25 +263,40 @@ public class CryptoServiceImpl implements CryptoService {
             .status(cryptoTransferResponseDTO.getStatus())
             .accepted(true)
             .acceptedAt(acceptedAt)
+            .acceptedAt(cryptoDeposit.getRequestedAt())
             .build();
 
     CryptoDeposit save = cryptoDepositRepository.save(response);
 
-    CryptoDepositDTO result = toCryptoDepositDTO(save);
-
-    Site siteEntity =
-        siteRepository.findBySite(siteCode).orElseThrow(CannotFoundSiteException::new);
+    CryptoDepositDTO result =
+        CryptoDepositDTO.builder()
+            .id(save.getId())
+            .email(cryptoAccount.getEmail())
+            .status(save.getStatus())
+            .chainType(save.getChainType())
+            .cryptoType(save.getCryptoType())
+            .fromAddress(save.getFromAddress())
+            .toAddress(save.getToAddress())
+            .amount(save.getAmount())
+            .krwAmount(save.getKrwAmount())
+            .accepted(save.getAccepted())
+            .acceptedAt(save.getAcceptedAt())
+            .requestedAt(save.getRequestedAt())
+            .isSend(save.isSend())
+            .build();
 
     DepositNotifyDTO depositNotifyDTO =
         DepositNotifyDTO.builder()
+            .site(siteCode)
             .email(result.getEmail())
+            .cryptoType(result.getCryptoType())
             .fromAddress(result.getFromAddress())
             .amount(result.getAmount())
             .krwAmount(result.getKrwAmount())
             .requestedAt(result.getRequestedAt())
             .build();
 
-    messageProducer.sendDepositMessage(depositNotifyDTO, siteEntity.getSite());
+    messageProducer.sendDepositMessage(depositNotifyDTO);
 
     return result;
   }
