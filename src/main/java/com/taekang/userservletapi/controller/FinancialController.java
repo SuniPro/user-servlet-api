@@ -17,9 +17,6 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("financial")
 public class FinancialController {
 
-  @Value("${server.servlet.context-path}")
-  private String contextPath;
-
   @Value("${icoin.domain}")
   private String icoinDomain;
 

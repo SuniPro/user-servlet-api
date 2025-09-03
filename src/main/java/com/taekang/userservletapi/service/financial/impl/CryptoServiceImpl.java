@@ -6,7 +6,6 @@ import com.taekang.userservletapi.api.CryptoValidationService;
 import com.taekang.userservletapi.entity.user.*;
 import com.taekang.userservletapi.error.*;
 import com.taekang.userservletapi.rabbitMQ.MessageProducer;
-import com.taekang.userservletapi.repository.employee.SiteRepository;
 import com.taekang.userservletapi.repository.user.CryptoAccountRepository;
 import com.taekang.userservletapi.repository.user.CryptoDepositRepository;
 import com.taekang.userservletapi.service.EmailAuthorizationService;
@@ -32,9 +31,7 @@ public class CryptoServiceImpl implements CryptoService {
   private final CryptoDepositRepository cryptoDepositRepository;
 
   private final EmailAuthorizationService emailAuthorizationService;
-
-  private final SiteRepository siteRepository;
-
+  
   private final CryptoTransferValidation cryptoTransferValidation;
 
   private final MessageProducer messageProducer;
@@ -47,7 +44,6 @@ public class CryptoServiceImpl implements CryptoService {
       CryptoAccountRepository cryptoAccountRepository,
       CryptoDepositRepository cryptoDepositRepository,
       EmailAuthorizationService emailAuthorizationService,
-      SiteRepository siteRepository,
       CryptoTransferValidation cryptoTransferValidation,
       MessageProducer messageProducer,
       CryptoValidationService cryptoValidationService,
@@ -55,7 +51,6 @@ public class CryptoServiceImpl implements CryptoService {
     this.cryptoAccountRepository = cryptoAccountRepository;
     this.cryptoDepositRepository = cryptoDepositRepository;
     this.emailAuthorizationService = emailAuthorizationService;
-    this.siteRepository = siteRepository;
     this.cryptoTransferValidation = cryptoTransferValidation;
     this.messageProducer = messageProducer;
     this.cryptoValidationService = cryptoValidationService;
