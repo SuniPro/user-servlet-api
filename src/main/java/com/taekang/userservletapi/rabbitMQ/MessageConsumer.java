@@ -1,6 +1,7 @@
 package com.taekang.userservletapi.rabbitMQ;
 
-import com.taekang.userservletapi.DTO.crypto.CryptoDepositDTO;
+import com.taekang.userservletapi.DTO.crypto.DepositSentApprovalNotifyDTO;
+import com.taekang.userservletapi.error.FailedMessageSendException;
 import com.taekang.userservletapi.service.MailSenderService;
 import jakarta.mail.internet.MimeMessage;
 import lombok.extern.slf4j.Slf4j;
@@ -23,11 +24,15 @@ public class MessageConsumer {
   }
 
   @RabbitListener(queues = "${rabbitmq.deposit.approval.queue}")
-  public void receiveDepositMessage(CryptoDepositDTO message) {
+  public void receiveDepositMessage(DepositSentApprovalNotifyDTO message) {
     log.info("Received deposit message: {}", message.toString());
 
     MimeMessage mail = mailSenderService.createDepositApprovalMail(message.getEmail(), message);
 
-    javaMailSender.send(mail);
+    try {
+      javaMailSender.send(mail);
+    } catch (Exception e) {
+      throw new FailedMessageSendException();
+    }
   }
 }

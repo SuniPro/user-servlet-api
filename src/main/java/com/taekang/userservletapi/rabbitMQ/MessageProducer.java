@@ -5,8 +5,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.messaging.Message;
-import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.stereotype.Service;
 
 @Slf4j
@@ -26,9 +24,8 @@ public class MessageProducer {
     this.rabbitTemplate = rabbitTemplate;
   }
 
-  public void sendDepositMessage(DepositNotifyDTO message, String siteCode) {
-    Message<DepositNotifyDTO> msg =
-        MessageBuilder.withPayload(message).setHeader("site", siteCode).build();
-    rabbitTemplate.convertAndSend(transactionExchangeName, depositRequestRoutingKey, msg);
+  public void sendDepositMessage(DepositNotifyDTO message) {
+    log.info("Sending deposit message: {}", message);
+    rabbitTemplate.convertAndSend(transactionExchangeName, depositRequestRoutingKey, message);
   }
 }

@@ -17,8 +17,8 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("financial")
 public class FinancialController {
 
-  @Value("${server.servlet.context-path}")
-  private String contextPath;
+  @Value("${icoin.domain}")
+  private String icoinDomain;
 
   private final CryptoService cryptoService;
   private final AuthService authService;
@@ -49,7 +49,8 @@ public class FinancialController {
         ResponseCookie.from("access-token", tokenResponse.getAccessToken())
             .httpOnly(true)
             //            .secure(true)
-            .path(contextPath)
+            .domain(icoinDomain)
+            .path("/")
             .maxAge(tokenResponse.getAccessTokenExpiresIn())
             .sameSite("Strict")
             .build();
@@ -59,7 +60,8 @@ public class FinancialController {
         ResponseCookie.from("refresh-token", tokenResponse.getRefreshToken())
             .httpOnly(true)
             //            .secure(true)
-            .path(contextPath)
+            .domain(icoinDomain)
+            .path("/")
             .maxAge(tokenResponse.getRefreshTokenExpiresIn())
             .sameSite("Strict")
             .build();
@@ -81,6 +83,11 @@ public class FinancialController {
     return ResponseEntity.ok().body(cryptoService.createDeposit(cryptoDepositRequestDTO));
   }
 
+  @GetMapping("crypto/get/deposit/by/{id}")
+  public ResponseEntity<CryptoDepositDTO> getDepositById(@PathVariable Long id) {
+    return ResponseEntity.ok().body(cryptoService.getDepositById(id));
+  }
+
   @GetMapping("crypto/get/deposit/by/crypto/wallet/{cryptoWallet}")
   public ResponseEntity<CryptoDepositDTO> getLatestDepositByWallet(
       @PathVariable String cryptoWallet) {
@@ -91,6 +98,8 @@ public class FinancialController {
   public ResponseEntity<CryptoDepositDTO> depositRequest(
       @CookieValue("access-token") String token, @RequestBody Long id) {
     String siteCode = jwtUtil.getUserSite(token);
-    return ResponseEntity.ok().body(cryptoService.depositConfirmRequest(id, siteCode));
+    String cryptoWallet = jwtUtil.getUserCryptoWallet(token);
+    return ResponseEntity.ok()
+        .body(cryptoService.depositConfirmRequest(id, cryptoWallet, siteCode));
   }
 }

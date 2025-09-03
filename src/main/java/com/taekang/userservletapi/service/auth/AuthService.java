@@ -71,7 +71,7 @@ public class AuthService {
     // 3) Redis 저장된 토큰 확인
     String key = refreshTokenPrefix + email;
     String saved = redisTemplate.opsForValue().get(key);
-    if (saved == null || saved.equals(oldRefreshToken)) {
+    if (saved == null || !saved.equals(oldRefreshToken)) {
       throw new TokenNotValidateException();
     }
 

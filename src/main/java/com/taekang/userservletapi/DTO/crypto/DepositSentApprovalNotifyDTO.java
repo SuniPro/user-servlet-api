@@ -12,21 +12,14 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class DepositNotifyDTO {
-
-  private String site;
+public class DepositSentApprovalNotifyDTO {
 
   private String email;
 
   private CryptoType cryptoType;
 
-  private String fromAddress;
-
   @JsonFormat(shape = JsonFormat.Shape.STRING)
   private BigDecimal amount;
 
-  @JsonFormat(shape = JsonFormat.Shape.STRING)
-  private BigDecimal krwAmount;
-
-  private LocalDateTime requestedAt;
+  private LocalDateTime requestAt;
 }

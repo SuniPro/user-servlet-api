@@ -2,6 +2,9 @@
 <!-- 60초마다 설정 파일의 변경을 확인 하여 변경시 갱신 -->
 <configuration scan="true" scanPeriod="60 seconds">
 
+    <!-- Optional: Spring Boot 기본 변환기 포함 -->
+    <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+
     <!--Environment 내의 프로퍼티들을 개별적으로 설정할 수도 있다.-->
     <springProperty scope="context" name="LOG_LEVEL" source="logging.level.root"/>
 
