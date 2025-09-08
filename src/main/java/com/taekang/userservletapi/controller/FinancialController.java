@@ -52,7 +52,7 @@ public class FinancialController {
     ResponseCookie accessCookie =
         ResponseCookie.from("access-token", tokenResponse.getAccessToken())
             .httpOnly(true)
-            //            .secure(true)
+                        .secure(true)
             .domain(icoinDomain)
             .path("/")
             .maxAge(tokenResponse.getAccessTokenExpiresIn())
@@ -63,7 +63,7 @@ public class FinancialController {
     ResponseCookie refreshCookie =
         ResponseCookie.from("refresh-token", tokenResponse.getRefreshToken())
             .httpOnly(true)
-            //            .secure(true)
+                        .secure(true)
             .domain(icoinDomain)
             .path("/")
             .maxAge(tokenResponse.getRefreshTokenExpiresIn())

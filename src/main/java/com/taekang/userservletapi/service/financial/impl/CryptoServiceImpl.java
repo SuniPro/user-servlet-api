@@ -8,7 +8,6 @@ import com.taekang.userservletapi.error.*;
 import com.taekang.userservletapi.rabbitMQ.MessageProducer;
 import com.taekang.userservletapi.repository.user.CryptoAccountRepository;
 import com.taekang.userservletapi.repository.user.CryptoDepositRepository;
-import com.taekang.userservletapi.service.EmailAuthorizationService;
 import com.taekang.userservletapi.service.financial.CryptoService;
 import com.taekang.userservletapi.util.WalletAddressType;
 import java.math.BigDecimal;
@@ -29,9 +28,7 @@ public class CryptoServiceImpl implements CryptoService {
   private final CryptoAccountRepository cryptoAccountRepository;
 
   private final CryptoDepositRepository cryptoDepositRepository;
-
-  private final EmailAuthorizationService emailAuthorizationService;
-
+  
   private final CryptoTransferValidation cryptoTransferValidation;
 
   private final MessageProducer messageProducer;
@@ -43,14 +40,12 @@ public class CryptoServiceImpl implements CryptoService {
   public CryptoServiceImpl(
       CryptoAccountRepository cryptoAccountRepository,
       CryptoDepositRepository cryptoDepositRepository,
-      EmailAuthorizationService emailAuthorizationService,
       CryptoTransferValidation cryptoTransferValidation,
       MessageProducer messageProducer,
       CryptoValidationService cryptoValidationService,
       ModelMapper modelMapper) {
     this.cryptoAccountRepository = cryptoAccountRepository;
     this.cryptoDepositRepository = cryptoDepositRepository;
-    this.emailAuthorizationService = emailAuthorizationService;
     this.cryptoTransferValidation = cryptoTransferValidation;
     this.messageProducer = messageProducer;
     this.cryptoValidationService = cryptoValidationService;
@@ -103,14 +98,6 @@ public class CryptoServiceImpl implements CryptoService {
     } else if (existsUsername || existsWallet) {
       throw new WalletVerification(); // 중복 but 일치하지 않음
     } else {
-
-      try {
-        log.info("[createOrFindCryptoAccount] Mail Send Start");
-        emailAuthorizationService.sendAuthMail(dto.getEmail());
-        log.info("[createOrFindCryptoAccount] Mail Send Complete");
-      } catch (Exception e) {
-        throw new FailedMessageSendException();
-      }
 
       // 신규 등록
       account =
