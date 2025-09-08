@@ -124,6 +124,8 @@ public class CryptoServiceImpl implements CryptoService {
       latestDepositOpt =
           cryptoDepositRepository.findTopByCryptoAccount_CryptoWalletOrderByRequestedAtDesc(
               account.getCryptoWallet());
+
+      log.info("Account created: {}", account.toString());
       return toDto(account, latestDepositOpt);
     }
   }

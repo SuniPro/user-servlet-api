@@ -10,6 +10,7 @@ import lombok.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE) // 빌더 사용 시 필수
 @Builder(toBuilder = true)
+@ToString
 public class CryptoAccount {
 
   @Id

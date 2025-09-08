@@ -51,7 +51,7 @@ public class AuthController {
             .httpOnly(true)
             .secure(true)
             .domain(icoinDomain)
-            .path(contextPath)
+                .path("/")
             .maxAge(tokenResponse.getAccessTokenExpiresIn())
             .sameSite("Strict")
             .build();
@@ -62,7 +62,7 @@ public class AuthController {
             .httpOnly(true)
             .secure(true)
             .domain(icoinDomain)
-            .path(contextPath)
+                .path("/")
             .maxAge(tokenResponse.getRefreshTokenExpiresIn())
             .sameSite("Strict")
             .build();
@@ -82,7 +82,7 @@ public class AuthController {
             .httpOnly(true)
             .secure(true)
             .domain(icoinDomain)
-                .path(contextPath)
+                .path("/")
             .maxAge(tokens.getAccessTokenExpiresIn())
             .sameSite("Strict")
             .build();
@@ -93,7 +93,7 @@ public class AuthController {
             .httpOnly(true)
             .secure(true)
             .domain(icoinDomain)
-                .path(contextPath)
+                .path("/")
             .maxAge(tokens.getRefreshTokenExpiresIn())
             .sameSite("Strict")
             .build();
