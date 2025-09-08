@@ -28,7 +28,7 @@ public class CryptoServiceImpl implements CryptoService {
   private final CryptoAccountRepository cryptoAccountRepository;
 
   private final CryptoDepositRepository cryptoDepositRepository;
-  
+
   private final CryptoTransferValidation cryptoTransferValidation;
 
   private final MessageProducer messageProducer;
