@@ -17,9 +17,6 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/auth")
 public class AuthController {
 
-  @Value("${server.servlet.context-path}")
-  private String contextPath;
-
   @Value("${icoin.domain}")
   private String icoinDomain;
 

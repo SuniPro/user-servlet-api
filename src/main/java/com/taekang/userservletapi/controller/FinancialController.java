@@ -6,6 +6,7 @@ import com.taekang.userservletapi.entity.user.CryptoAccount;
 import com.taekang.userservletapi.service.auth.AuthService;
 import com.taekang.userservletapi.service.financial.CryptoService;
 import com.taekang.userservletapi.util.auth.JwtUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
@@ -13,6 +14,7 @@ import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+@Slf4j
 @RestController
 @RequestMapping("financial")
 public class FinancialController {
@@ -43,8 +45,10 @@ public class FinancialController {
     CryptoAccountAndDepositDTO orFindCryptoAccount =
         cryptoService.createOrFindCryptoAccount(cryptoCreateDTO);
 
+    log.info("[createOrFindCryptoAccount] Create orFindCryptoAccount {}", orFindCryptoAccount.toString());
     TokenResponse tokenResponse = authService.signIn(cryptoCreateDTO);
 
+    log.info("[createOrFindCryptoAccount] Create tokenResponse {}", tokenResponse.toString());
     ResponseCookie accessCookie =
         ResponseCookie.from("access-token", tokenResponse.getAccessToken())
             .httpOnly(true)

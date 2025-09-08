@@ -105,7 +105,9 @@ public class CryptoServiceImpl implements CryptoService {
     } else {
 
       try {
+        log.info("[createOrFindCryptoAccount] Mail Send Start");
         emailAuthorizationService.sendAuthMail(dto.getEmail());
+        log.info("[createOrFindCryptoAccount] Mail Send Complete");
       } catch (Exception e) {
         throw new FailedMessageSendException();
       }
@@ -120,12 +122,13 @@ public class CryptoServiceImpl implements CryptoService {
                   .site(dto.getSite())
                   .insertDateTime(LocalDateTime.now(ZoneId.of("Asia/Seoul")))
                   .build());
+      log.info("[createOrFindCryptoAccount] Account Created {}", account);
 
       latestDepositOpt =
           cryptoDepositRepository.findTopByCryptoAccount_CryptoWalletOrderByRequestedAtDesc(
               account.getCryptoWallet());
 
-      log.info("Account created: {}", account.toString());
+      log.info("[createOrFindCryptoAccount] Account latestDepositOpt {}", latestDepositOpt);
       return toDto(account, latestDepositOpt);
     }
   }
