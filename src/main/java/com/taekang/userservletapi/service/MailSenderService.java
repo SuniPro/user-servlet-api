@@ -75,6 +75,9 @@ public class MailSenderService {
               + depositSentApprovalNotifyDTO.getRequestAt().format(formatter)
               + "에 요청하신 <strong>"
               + depositSentApprovalNotifyDTO.getAmount()
+              + "(실제 입금금액 / "
+              + depositSentApprovalNotifyDTO.getRealAmount()
+              + " ) "
               + " "
               + depositSentApprovalNotifyDTO.getCryptoType()
               + "</strong> 입금이 정상적으로 승인되었습니다."

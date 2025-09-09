@@ -14,6 +14,7 @@ import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.Objects;
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -107,7 +108,7 @@ public class CryptoServiceImpl implements CryptoService {
                   .chainType(type.toChainType())
                   .email(dto.getEmail())
                   .site(dto.getSite())
-                  .insertDateTime(LocalDateTime.now(ZoneId.of("Asia/Seoul")))
+                  .insertDateTime(LocalDateTime.now())
                   .build());
       log.info("[createOrFindCryptoAccount] Account Created {}", account);
 
@@ -147,7 +148,7 @@ public class CryptoServiceImpl implements CryptoService {
     cryptoAccount =
         cryptoAccount.toBuilder()
             .cryptoWallet(cryptoWalletUpdateDTO.getCryptoWallet())
-            .updateDateTime(LocalDateTime.now(ZoneId.of("Asia/Seoul")))
+            .updateDateTime(LocalDateTime.now())
             .build();
     return cryptoAccountRepository.save(cryptoAccount);
   }
@@ -172,10 +173,11 @@ public class CryptoServiceImpl implements CryptoService {
             .cryptoType(dto.getCryptoType())
             .toAddress(dto.getToAddress())
             .fromAddress(dto.getFromAddress())
+            .realAmount(null)
             .amount(dto.getAmount())
             .krwAmount(dto.getKrwAmount())
             .accepted(false)
-            .requestedAt(LocalDateTime.now(ZoneId.of("Asia/Seoul")))
+            .requestedAt(LocalDateTime.now())
             .isSend(false)
             .build();
 
@@ -231,29 +233,36 @@ public class CryptoServiceImpl implements CryptoService {
 
     log.info("[TronWalletValidation] Response: {}", cryptoTransferResponseDTO.toString());
 
+    CryptoDeposit build;
     BigDecimal responseAmount = new BigDecimal(cryptoTransferResponseDTO.getCryptoAmount());
     if (cryptoDeposit
             .getAmount()
             .compareTo(responseAmount.movePointLeft(cryptoTransferResponseDTO.getDecimals()))
         != 0) {
-      throw new NotEqualsDepositAmountException();
+      build =
+          cryptoDeposit.toBuilder()
+              .status(TransactionStatus.FAILED)
+              .realAmount(responseAmount)
+              .accepted(false)
+              .acceptedAt(null)
+              .build();
+
+    } else {
+      long acceptedAtTimestamp = cryptoTransferResponseDTO.getAcceptedAt();
+      Instant instant = Instant.ofEpochMilli(acceptedAtTimestamp);
+      LocalDateTime acceptedAt = LocalDateTime.ofInstant(instant, ZoneId.of("Asia/Seoul"));
+
+      build =
+          cryptoDeposit.toBuilder()
+              .status(cryptoTransferResponseDTO.getStatus())
+              .realAmount(responseAmount)
+              .accepted(true)
+              .acceptedAt(acceptedAt)
+              .acceptedAt(cryptoDeposit.getRequestedAt())
+              .build();
     }
 
-    long acceptedAtTimestamp = cryptoTransferResponseDTO.getAcceptedAt();
-
-    Instant instant = Instant.ofEpochMilli(acceptedAtTimestamp);
-
-    LocalDateTime acceptedAt = LocalDateTime.ofInstant(instant, ZoneId.of("Asia/Seoul"));
-
-    CryptoDeposit response =
-        cryptoDeposit.toBuilder()
-            .status(cryptoTransferResponseDTO.getStatus())
-            .accepted(true)
-            .acceptedAt(acceptedAt)
-            .acceptedAt(cryptoDeposit.getRequestedAt())
-            .build();
-
-    CryptoDeposit save = cryptoDepositRepository.save(response);
+    CryptoDeposit save = cryptoDepositRepository.save(Objects.requireNonNull(build));
 
     CryptoDepositDTO result =
         CryptoDepositDTO.builder()
@@ -266,6 +275,7 @@ public class CryptoServiceImpl implements CryptoService {
             .toAddress(save.getToAddress())
             .amount(save.getAmount())
             .krwAmount(save.getKrwAmount())
+            .realAmount(save.getRealAmount())
             .accepted(save.getAccepted())
             .acceptedAt(save.getAcceptedAt())
             .requestedAt(save.getRequestedAt())
@@ -280,6 +290,7 @@ public class CryptoServiceImpl implements CryptoService {
             .fromAddress(result.getFromAddress())
             .amount(result.getAmount())
             .krwAmount(result.getKrwAmount())
+            .realAmount(result.getRealAmount())
             .requestedAt(result.getRequestedAt())
             .build();
 
@@ -299,6 +310,7 @@ public class CryptoServiceImpl implements CryptoService {
         .toAddress(save.getToAddress())
         .amount(save.getAmount())
         .krwAmount(save.getKrwAmount())
+        .realAmount(save.getRealAmount())
         .accepted(save.getAccepted())
         .acceptedAt(save.getAcceptedAt())
         .requestedAt(save.getRequestedAt())
